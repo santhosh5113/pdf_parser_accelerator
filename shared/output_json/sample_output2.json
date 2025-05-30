@@ -1,0 +1,58 @@
+{
+  "pages": [
+    {
+      "text": "            RAJALAKSHMI\n            ENGINEERING COLLEGE\n     REC       An AUTONOMoUs Institution\n            Affiliated to AMNA UNiVERSiTY, Chennai\n Rajalakshmi Nagar; Thandalam, Chennai 602105\n   044-67181111 12  admin@rajalakshmiedu in\n\n                     Rajalakshngi\n\nSANTHOSH.R                       '\n                              `\nREG_NO :211501091\nB.Tech: Artificial Intelligence &\nMachine Learning",
+      "markdown": "# RAJALAKSHMI ENGINEERING COLLEGE\n\nAn AUTONOMOUS Institution\nAffiliated to ANNA UNIVERSITY, Chennai\n\nRajalakshmi Nagar, Thandalam, Chennai - 602105\n📞 044-67181111 / 12 ✉️ admin@rajalakshmi.edu.in\n\n## IDENTITY CARD\n\nThe card contains a photograph of a young man wearing a dark suit and a blue patterned tie.\n\nSANTHOSH.R\n\nREG.NO : 211501091\n\nB.Tech. Artificial Intelligence &\nMachine Learning\n\n*Note: The card includes the college logo and a holographic security feature with the Rajalakshmi Institutions emblem.*",
+      "images": [
+        {
+          "name": "img_p0_1.png",
+          "height": 3115.0,
+          "width": 2022.0,
+          "x": 24.22,
+          "y": 0.0,
+          "original_width": 2022,
+          "original_height": 3115,
+          "type": null
+        },
+        {
+          "name": "page_1.jpg",
+          "height": 842.0,
+          "width": 595.0,
+          "x": 0.0,
+          "y": 0.0,
+          "original_width": 1131,
+          "original_height": 1600,
+          "type": "full_page_screenshot"
+        }
+      ],
+      "layout": []
+    },
+    {
+      "text": "Date of Birth:\n 05-NOV-2003\n Blood Group:\n  O+VE                          #\n\nAddress & Phone no(s):\nDOOR NO: 1/12, PLOT NO: 124B, 2ND\n AVENUE SFREET, SENDHURPURAM EXT- 1\n KATTUPAKKAM; CHENNAI     600056.\n9176471277 S,9962069866 F, 9551269866 M\n\n                            ~0, Aluut\n                            Principal\n           INSTRUCTIQNS\n  1. Thiis ID Card is a property of the college and has t be\n  produced 6rr demand by college authorities.\n  2.Student should always wear 'Identity Card within the\n  caripus arid in the college bus.\n  3. Loss Ordarage of this card should be immediately\n  reported ir writing to the Principal\n  4. Possession or using of photo copy / colorprint _¹\n  duplication of Ihis ID card is an offence:\n  5,This Card is valid till May 2025",
+      "markdown": "Date of Birth: 05-NOV-2003\n\nBlood Group: O+VE\n\nAddress & Phone no(s):\nDOOR NO: 1/12, PLOT NO: 124B, 2ND\nAVENUE STREET, SENDHURPURAM EXT- 1\nKATTUPAKKAM, CHENNAI - 600056.\n9176471277 S, 9962069866 F, 9551269866 M\n\nPrincipal: S.G. Muniyandi (signature present)\n\n### INSTRUCTIONS\n\n1. This ID Card is a property of the college and has to be produced on demand by college authorities.\n\n2. Student should always wear Identity Card within the campus and in the college bus.\n\n3. Loss or damage of this card should be immediately reported in writing to the Principal.\n\n4. Possession or using of photo copy / color print / duplication of this ID card is an offence.\n\n5. This card is valid till May 2025",
+      "images": [
+        {
+          "name": "img_p1_1.png",
+          "height": 2943.0,
+          "width": 1881.0,
+          "x": 28.42,
+          "y": 0.0,
+          "original_width": 1881,
+          "original_height": 2943,
+          "type": null
+        },
+        {
+          "name": "page_2.jpg",
+          "height": 842.0,
+          "width": 595.0,
+          "x": 0.0,
+          "y": 0.0,
+          "original_width": 1131,
+          "original_height": 1600,
+          "type": "full_page_screenshot"
+        }
+      ],
+      "layout": []
+    }
+  ]
+}

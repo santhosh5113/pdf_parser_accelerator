@@ -1,0 +1,1312 @@
+[
+  {
+    "id": "table_images.pdf_chunk_0",
+    "content": "arXiv:2408.09869v5  [cs.CL]  9 Dec 2024",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_1",
+    "content": "Christoph Auer Maksym Lysak Ahmed Nassar Michele Dolfi Nikolaos Livathinos Panos Vagenas Cesar Berrospi Ramis Matteo Omenetti Fabian Lindlbauer Kasper Dinkla Lokesh Mishra Yusik Kim Shubham Gupta Rafael Teixeira de Lima Valery Weber Lucas Morin Ingmar Meijer Viktor Kuropiatnyk Peter W. J. Staar",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_2",
+    "content": "AI4K Group, IBM Research R¨ uschlikon, Switzerland",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_3",
+    "content": "This technical report introduces Docling , an easy to use, self-contained, MITlicensed open-source package for PDF document conversion. It is powered by state-of-the-art specialized AI models for layout analysis (DocLayNet) and table structure recognition (TableFormer), and runs efficiently on commodity hardware in a small resource budget. The code interface allows for easy extensibility and addition of new features and models.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_4",
+    "content": "Converting PDF documents back into a machine-processable format has been a major challenge for decades due to their huge variability in formats, weak standardization and printing-optimized characteristic, which discards most structural features and metadata. With the advent of LLMs and popular application patterns such as retrieval-augmented generation (RAG), leveraging the rich content embedded in PDFs has become ever more relevant. In the past decade, several powerful document understanding solutions have emerged on the market, most of which are commercial software, cloud offerings [3] and most recently, multi-modal vision-language models. As of today, only a handful of open-source tools cover PDF conversion, leaving a significant feature and quality gap to proprietary solutions.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_5",
+    "content": "With Docling , we open-source a very capable and efficient document conversion tool which builds on the powerful, specialized AI models and datasets for layout analysis and table structure recognition we developed and presented in the recent past [12, 13, 9]. Docling is designed as a simple, self-contained python library with permissive license, running entirely locally on commodity hardware. Its code architecture allows for easy extensibility and addition of new features and models.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_6",
+    "content": "Here is what Docling delivers today:",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_7",
+    "content": "· Converts PDF documents to JSON or Markdown format, stable and lightning fast",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_8",
+    "content": "· Understands detailed page layout, reading order, locates figures and recovers table structures",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_9",
+    "content": "· Extracts metadata from the document, such as title, authors, references and language",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_10",
+    "content": "· Optionally applies OCR, e.g. for scanned PDFs",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_11",
+    "content": "· Can be configured to be optimal for batch-mode (i.e high throughput, low time-to-solution) or interactive mode (compromise on efficiency, low time-to-solution)",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_12",
+    "content": "· Can leverage different accelerators (GPU, MPS, etc).",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_13",
+    "content": "To use Docling, you can simply install the docling package from PyPI. Documentation and examples are available in our GitHub repository at github.com/DS4SD/docling. All required model assets 1 are downloaded to a local huggingface datasets cache on first use, unless you choose to pre-install the model assets in advance.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_14",
+    "content": "Docling provides an easy code interface to convert PDF documents from file system, URLs or binary streams, and retrieve the output in either JSON or Markdown format. For convenience, separate methods are offered to convert single documents or batches of documents. A basic usage example is illustrated below. Further examples are available in the Doclign code repository.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_15",
+    "content": "from docling.document_converter import DocumentConverter Large",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_16",
+    "content": "source = \"https://arxiv.org/pdf/2206.01062\" # PDF path or URL converter = DocumentConverter() result = converter.convert_single(source) print(result.render_as_markdown()) # output: \"## DocLayNet: A Human -Annotated Dataset for Document -Layout Analysis [...]\"",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_17",
+    "content": "Optionally, you can configure custom pipeline features and runtime options, such as turning on or off features (e.g. OCR, table structure recognition), enforcing limits on the input document size, and defining the budget of CPU threads. Advanced usage examples and options are documented in the README file. Docling also provides a Dockerfile to demonstrate how to install and run it inside a container.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_18",
+    "content": "Docling implements a linear pipeline of operations, which execute sequentially on each given document (see Fig. 1). Each document is first parsed by a PDF backend, which retrieves the programmatic text tokens, consisting of string content and its coordinates on the page, and also renders a bitmap image of each page to support downstream operations. Then, the standard model pipeline applies a sequence of AI models independently on every page in the document to extract features and content, such as layout and table structures. Finally, the results from all pages are aggregated and passed through a post-processing stage, which augments metadata, detects the document language, infers reading-order and eventually assembles a typed document object which can be serialized to JSON or Markdown.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_19",
+    "content": "Two basic requirements to process PDF documents in our pipeline are a) to retrieve all text content and their geometric coordinates on each page and b) to render the visual representation of each page as it would appear in a PDF viewer. Both these requirements are encapsulated in Docling's PDF backend interface. While there are several open-source PDF parsing libraries available for python, we faced major obstacles with all of them for different reasons, among which were restrictive",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_20",
+    "content": "1 see huggingface.co/ds4sd/docling-models/",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_21",
+    "content": "Figure 1: Sketch of Docling's default processing pipeline. The inner part of the model pipeline is easily customizable and extensible.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_22",
+    "content": "licensing (e.g. pymupdf [7]), poor speed or unrecoverable quality issues, such as merged text cells across far-apart text tokens or table columns (pypdfium, PyPDF) [15, 14].",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_23",
+    "content": "We therefore decided to provide multiple backend choices, and additionally open-source a custombuilt PDF parser, which is based on the low-level qpdf [4] library. It is made available in a separate package named docling-parse and powers the default PDF backend in Docling. As an alternative, we provide a PDF backend relying on pypdfium , which may be a safe backup choice in certain cases, e.g. if issues are seen with particular font encodings.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_24",
+    "content": "As part of Docling, we initially release two highly capable AI models to the open-source community, which have been developed and published recently by our team. The first model is a layout analysis model, an accurate object-detector for page elements [13]. The second model is TableFormer [12, 9], a state-of-the-art table structure recognition model. We provide the pre-trained weights (hosted on huggingface) and a separate package for the inference code as docling-ibm-models . Both models are also powering the open-access deepsearch-experience, our cloud-native service for knowledge exploration tasks.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_25",
+    "content": "Our layout analysis model is an object-detector which predicts the bounding-boxes and classes of various elements on the image of a given page. Its architecture is derived from RT-DETR [16] and re-trained on DocLayNet [13], our popular human-annotated dataset for document-layout analysis, among other proprietary datasets. For inference, our implementation relies on the onnxruntime [5].",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_26",
+    "content": "The Docling pipeline feeds page images at 72 dpi resolution, which can be processed on a single CPU with sub-second latency. All predicted bounding-box proposals for document elements are post-processed to remove overlapping proposals based on confidence and size, and then intersected with the text tokens in the PDF to group them into meaningful and complete units such as paragraphs, section titles, list items, captions, figures or tables.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_27",
+    "content": "The TableFormer model [12], first published in 2022 and since refined with a custom structure token language [9], is a vision-transformer model for table structure recovery. It can predict the logical row and column structure of a given table based on an input image, and determine which table cells belong to column headers, row headers or the table body. Compared to earlier approaches, TableFormer handles many characteristics of tables, such as partial or no borderlines, empty cells, rows or columns, cell spans and hierarchy both on column-heading or row-heading level, tables with inconsistent indentation or alignment and other complexities. For inference, our implementation relies on PyTorch [2].",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_28",
+    "content": "The Docling pipeline feeds all table objects detected in the layout analysis to the TableFormer model, by providing an image-crop of the table and the included text cells. TableFormer structure predictions are matched back to the PDF cells in post-processing to avoid expensive re-transcription text in the table image. Typical tables require between 2 and 6 seconds to be processed on a standard CPU, strongly depending on the amount of included table cells.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_29",
+    "content": "Docling provides optional support for OCR, for example to cover scanned PDFs or content in bitmaps images embedded on a page. In our initial release, we rely on EasyOCR [1], a popular thirdparty OCR library with support for many languages. Docling, by default, feeds a high-resolution page image (216 dpi) to the OCR engine, to allow capturing small print detail in decent quality. While EasyOCR delivers reasonable transcription quality, we observe that it runs fairly slow on CPU (upwards of 30 seconds per page).",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_30",
+    "content": "We are actively seeking collaboration from the open-source community to extend Docling with additional OCR backends and speed improvements.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_31",
+    "content": "In the final pipeline stage, Docling assembles all prediction results produced on each page into a well-defined datatype that encapsulates a converted document, as defined in the auxiliary package docling-core . The generated document object is passed through a post-processing model which leverages several algorithms to augment features, such as detection of the document language, correcting the reading order, matching figures with captions and labelling metadata such as title, authors and references. The final output can then be serialized to JSON or transformed into a Markdown representation at the users request.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_32",
+    "content": "Docling provides a straight-forward interface to extend its capabilities, namely the model pipeline. A model pipeline constitutes the central part in the processing, following initial document parsing and preceding output assembly, and can be fully customized by sub-classing from an abstract baseclass ( BaseModelPipeline ) or cloning the default model pipeline. This effectively allows to fully customize the chain of models, add or replace models, and introduce additional pipeline configuration parameters. To use a custom model pipeline, the custom pipeline class to instantiate can be provided as an argument to the main document conversion methods. We invite everyone in the community to propose additional or alternative models and improvements.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_33",
+    "content": "Implementations of model classes must satisfy the python Callable interface. The __call__ method must accept an iterator over page objects, and produce another iterator over the page objects which were augmented with the additional features predicted by the model, by extending the provided PagePredictions data model accordingly.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_34",
+    "content": "In this section, we establish some reference numbers for the processing speed of Docling and the resource budget it requires. All tests in this section are run with default options on our standard test set distributed with Docling, which consists of three papers from arXiv and two IBM Redbooks, with a total of 225 pages. Measurements were taken using both available PDF backends on two different hardware systems: one MacBook Pro M3 Max, and one bare-metal server running Ubuntu 20.04 LTS on an Intel Xeon E5-2690 CPU. For reproducibility, we fixed the thread budget (through setting OMP NUM THREADS environment variable ) once to 4 (Docling default) and once to 16 (equal to full core count on the test hardware). All results are shown in Table 1.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_35",
+    "content": "If you need to run Docling in very low-resource environments, please consider configuring the pypdfium backend. While it is faster and more memory efficient than the default docling-parse backend, it will come at the expense of worse quality results, especially in table structure recovery.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_36",
+    "content": "Establishing GPU acceleration support for the AI models is currently work-in-progress and largely untested, but may work implicitly when CUDA is available and discovered by the onnxruntime and",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_37",
+    "content": "torch runtimes backing the Docling pipeline. We will deliver updates on this topic at in a future version of this report.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_38",
+    "content": "Table 1: Runtime characteristics of Docling with the standard model pipeline and settings, on our test dataset of 225 pages, on two different systems. OCR is disabled. We show the time-to-solution (TTS), computed throughput in pages per second, and the peak memory used (resident set size) for both the Docling-native PDF backend and for the pypdfium backend, using 4 and 16 threads.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_39",
+    "content": "Thanks to the high-quality, richly structured document conversion achieved by Docling, its output qualifies for numerous downstream applications. For example, Docling can provide a base for detailed enterprise document search, passage retrieval or classification use-cases, or support knowledge extraction pipelines, allowing specific treatment of different structures in the document, such as tables, figures, section structure or references. For popular generative AI application patterns, such as retrieval-augmented generation (RAG), we provide quackling , an open-source package which capitalizes on Docling's feature-rich document output to enable document-native optimized vector embedding and chunking. It plugs in seamlessly with LLM frameworks such as LlamaIndex [8]. Since Docling is fast, stable and cheap to run, it also makes for an excellent choice to build document-derived datasets. With its powerful table structure recognition, it provides significant benefit to automated knowledge-base construction [11, 10]. Docling is also integrated within the open IBM data prep kit [6], which implements scalable data transforms to build large-scale multi-modal training datasets.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_40",
+    "content": "6 Future work and contributions",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_41",
+    "content": "Docling is designed to allow easy extension of the model library and pipelines. In the future, we plan to extend Docling with several more models, such as a figure-classifier model, an equationrecognition model, a code-recognition model and more. This will help improve the quality of conversion for specific types of content, as well as augment extracted document metadata with additional information. Further investment into testing and optimizing GPU acceleration as well as improving the Docling-native PDF backend are on our roadmap, too.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_42",
+    "content": "We encourage everyone to propose or implement additional features and models, and will gladly take your inputs and contributions under review . The codebase of Docling is open for use and contribution, under the MIT license agreement and in alignment with our contributing guidelines included in the Docling repository. If you use Docling in your projects, please consider citing this technical report.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_43",
+    "content": "[1] J. AI. Easyocr: Ready-to-use ocr with 80+ supported languages. https://github.com/ JaidedAI/EasyOCR , 2024. Version: 1.7.0.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_44",
+    "content": "[2] J. Ansel, E. Yang, H. He, N. Gimelshein, A. Jain, M. Voznesensky, B. Bao, P. Bell, D. Berard, E. Burovski, G. Chauhan, A. Chourdia, W. Constable, A. Desmaison, Z. DeVito, E. Ellison, W. Feng, J. Gong, M. Gschwind, B. Hirsh, S. Huang, K. Kalambarkar, L. Kirsch, M. Lazos, M. Lezcano, Y. Liang, J. Liang, Y. Lu, C. Luk, B. Maher, Y. Pan, C. Puhrsch, M. Reso, M. Saroufim, M. Y. Siraichi, H. Suk, M. Suo, P. Tillet, E. Wang, X. Wang, W. Wen, S. Zhang, X. Zhao, K. Zhou, R. Zou, A. Mathews, G. Chanan, P. Wu, and S. Chintala. Pytorch 2: Faster",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_45",
+    "content": "machine learning through dynamic python bytecode transformation and graph compilation. In Proceedings of the 29th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2 (ASPLOS '24) . ACM, 4 2024. doi: 10.1145/3620665.3640366. URL https://pytorch.org/assets/pytorch2-2.pdf .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_46",
+    "content": "[3] C. Auer, M. Dolfi, A. Carvalho, C. B. Ramis, and P. W. Staar. Delivering document conversion as a cloud service with high throughput and responsiveness. In 2022 IEEE 15th International Conference on Cloud Computing (CLOUD) , pages 363-373. IEEE, 2022.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_47",
+    "content": "[4] J. Berkenbilt. Qpdf: A content-preserving pdf document transformer, 2024. URL https: //github.com/qpdf/qpdf .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_48",
+    "content": "[5] O. R. developers. Onnx runtime. https://onnxruntime.ai/ , 2024. Version: 1.18.1.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_49",
+    "content": "[6] IBM. Data Prep Kit: a community project to democratize and accelerate unstructured data preparation for LLM app developers, 2024. URL https://github.com/IBM/ data-prep-kit .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_50",
+    "content": "[7] A. S. Inc. PyMuPDF, 2024. URL https://github.com/pymupdf/PyMuPDF .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_51",
+    "content": "[8] J. Liu. LlamaIndex, 11 2022. URL https://github.com/jerryjliu/llama_index .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_52",
+    "content": "[9] M. Lysak, A. Nassar, N. Livathinos, C. Auer, and P. Staar. Optimized Table Tokenization for Table Structure Recognition. In Document Analysis and Recognition - ICDAR 2023: 17th International Conference, San Jos´ e, CA, USA, August 21-26, 2023, Proceedings, Part II , pages 37-50, Berlin, Heidelberg, Aug. 2023. Springer-Verlag. ISBN 978-3-031-41678-1. doi: 10. 1007/978-3-031-41679-8 3. URL https://doi.org/10.1007/978-3-031-41679-8_3 .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_53",
+    "content": "[10] L. Mishra, S. Dhibi, Y. Kim, C. Berrospi Ramis, S. Gupta, M. Dolfi, and P. Staar. Statements: Universal information extraction from tables with large language models for ESG KPIs. In D. Stammbach, J. Ni, T. Schimanski, K. Dutia, A. Singh, J. Bingler, C. Christiaen, N. Kushwaha, V. Muccione, S. A. Vaghefi, and M. Leippold, editors, Proceedings of the 1st Workshop on Natural Language Processing Meets Climate Change (ClimateNLP 2024) , pages 193-214, Bangkok, Thailand, Aug. 2024. Association for Computational Linguistics. URL https://aclanthology.org/2024.climatenlp-1.15 .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_54",
+    "content": "[11] L. Morin, V. Weber, G. I. Meijer, F. Yu, and P. W. J. Staar. Patcid: an open-access dataset of chemical structures in patent documents. Nature Communications , 15(1):6532, August 2024. ISSN 2041-1723. doi: 10.1038/s41467-024-50779-y. URL https://doi.org/10.1038/ s41467-024-50779-y .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_55",
+    "content": "[12] A. Nassar, N. Livathinos, M. Lysak, and P. Staar. Tableformer: Table structure understanding with transformers. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , pages 4614-4623, 2022.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_56",
+    "content": "[13] B. Pfitzmann, C. Auer, M. Dolfi, A. S. Nassar, and P. Staar. Doclaynet: a large humanannotated dataset for document-layout segmentation. pages 3743-3751, 2022.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_57",
+    "content": "[14] pypdf Maintainers. pypdf: A Pure-Python PDF Library, 2024. URL https://github.com/ py-pdf/pypdf .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_58",
+    "content": "[15] P. Team. PyPDFium2: Python bindings for PDFium, 2024. URL https://github.com/ pypdfium2-team/pypdfium2 .",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_59",
+    "content": "[16] Y. Zhao, W. Lv, S. Xu, J. Wei, G. Wang, Q. Dang, Y. Liu, and J. Chen. Detrs beat yolos on real-time object detection, 2023.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_60",
+    "content": "arXiv:2206.01062v1  [cs.CV]  2 Jun 2022",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_61",
+    "content": "In this section, we illustrate a few examples of Docling's output in Markdown and JSON.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_62",
+    "content": "DocLayNet: A Large Human-Annotated Dataset for Document-Layout Analysis",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_63",
+    "content": "DocLayNet: A Large Human-Annotated Dataset for Document-Layout Analysis",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_64",
+    "content": "Birgit Pfitzmann IBM Research Rueschlikon, Switzerland bpf@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_65",
+    "content": "Christoph Auer IBM Research Rueschlikon, Switzerland cau@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_66",
+    "content": "Michele Dolfi IBM Research Rueschlikon, Switzerland dol@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_67",
+    "content": "Ahmed S. Nassar IBM Research Rueschlikon, Switzerland ahn@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_68",
+    "content": "Peter Staar IBM Research Rueschlikon, Switzerland taa@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_69",
+    "content": "Accurate document layout analysis is a key requirement for highquality PDF document conversion. With the recent availability of public, large ground-truth datasets such as PubLayNet and DocBank, deep-learning models have proven to be very effective at layout detection and segmentation. While these datasets are of adequate size to train such models, they severely lack in layout variability since they are sourced from scientific article repositories such as PubMed and arXiv only. Consequently, the accuracy of the layout segmentation drops significantly when these models are applied on more challenging and diverse layouts. In this paper, we present DocLayNet , a new, publicly available, document-layout annotation dataset in COCO format. It contains 80863 manually annotated pages from diverse data sources to represent a wide variability in layouts. For each PDF page, the layout annotations provide labelled bounding-boxes with a choice of 11 distinct classes. DocLayNet also provides a subset of double- and triple-annotated pages to determine the inter-annotator agreement. In multiple experiments, we provide baseline accuracy scores (in mAP) for a set of popular object detection models. We also demonstrate that these models fall approximately 10% behind the inter-annotator agreement. Furthermore, we provide evidence that DocLayNet is of sufficient size. Lastly, we compare models trained on PubLayNet, DocBank and DocLayNet, showing that layout predictions of the DocLayNettrained models are more robust and thus the preferred choice for general-purpose document-layout analysis.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_70",
+    "content": "· Informationsystems → Documentstructure ; · Appliedcomputing → Document analysis ; · Computing methodologies → Machine learning Computer vision ; ; Object detection ;",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_71",
+    "content": "Permission to make digital or hard copies of part or all of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for third-party components of this work must be honored. For all other uses, contact the owner/author(s). KDD '22, August 14-18, 2022, Washington, DC, USA © 2022 Copyright held by the owner/author(s). ACM ISBN 978-1-4503-9385-0/22/08. https://doi.org/10.1145/3534678.3539043",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_72",
+    "content": "Birgit Pfitzmann IBM Research Rueschlikon, Switzerland bpf@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_73",
+    "content": "Christoph Auer IBM Research Rueschlikon, Switzerland cau@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_74",
+    "content": "Michele Dolfi IBM Research Rueschlikon, Switzerland dol@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_75",
+    "content": "Ahmed S. Nassar IBM Research Rueschlikon, Switzerland ahn@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_76",
+    "content": "Peter Staar IBM Research Rueschlikon, Switzerland taa@zurich.ibm.com",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_77",
+    "content": "Accurate document layout analysis is a key requirement for highquality PDF document conversion. With the recent availability of public, large groundtruth datasets such as PubLayNet and DocBank, deep-learning models have proven to be very effective at layout detection and segmentation. While these datasets are of adequate size to train such models, they severely lack in layout variability since they are sourced from scientific article repositories such as PubMed and arXiv only. Consequently, the accuracy of the layout segmentation drops significantly when these models are applied on more challenging and diverse layouts. In this paper, we present DocLayNet , a new, publicly available, document-layout annotation dataset in COCO format. It contains 80863 manually annotated pages from diverse data sources to represent a wide variability in layouts. For each PDF page, the layout annotations provide labelled bounding-boxes with a choice of 11 distinct classes. DocLayNet also provides a subset of double- and triple-annotated pages to determine the inter-annotator agreement. In multiple experiments, we provide baseline accuracy scores (in mAP) for a set of popular object detection models. We also demonstrate that these models fall approximately 10% behind the inter-annotator agreement. Furthermore, we provide evidence that DocLayNet is of sufficient size. Lastly, we compare models trained on PubLayNet, DocBank and DocLayNet, showing that layout predictions of the DocLayNettrained models are more robust and thus the preferred choice for general-purpose document-layout analysis.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_78",
+    "content": "Æ Information systems → Document structure ; Æ Applied computing → Document analysis ; Æ Computing methodologies → Machine learning ; Computer vision ; Object detection ;",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_79",
+    "content": "Permission to make digital or hard copies of part or all of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for profit or commercial advantage and that copies bear this notice and the full citation on the first page. Copyrights for third-party components of this work must be honored. For all other uses, contact the owner/author(s).",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_80",
+    "content": "KDD '22, August 14-18, 2022, Washington, DC, USA ' 2022 Copyright held by the owner/author(s). ACM ISBN 978-1-4503-9385-0/22/08. https://doi.org/10.1145/3534678.3539043",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_81",
+    "content": "Figure 1: Four examples of complex page layouts across different document categories",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_82",
+    "content": "PDF document conversion, layout segmentation, object-detection, data set, Machine Learning",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_83",
+    "content": "Birgit Pfitzmann, Christoph Auer, Michele Dolfi, Ahmed S. Nassar, and Peter Staar. 2022. DocLayNet: A Large Human-Annotated Dataset for DocumentLayout Analysis. In Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD '22), August 14-18, 2022, Washington, DC, USA. ACM, New York, NY, USA, 9 pages. https://doi.org/10.1145/ 3534678.3539043",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_84",
+    "content": "1. The vertical tube can be used for",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_85",
+    "content": "the image with a dig tal camera or a",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_86",
+    "content": "the adjustment ring to change the",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_87",
+    "content": "1. There are two objectives. The lower",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_88",
+    "content": "magnif cation objective has a greater",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_89",
+    "content": "2. In order to observe the specimen",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_90",
+    "content": "easily use the lower magnif cation",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_91",
+    "content": "objective first. Then, by rotating the",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_92",
+    "content": "case, the magnif cation can be",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_93",
+    "content": "pupils is the interpupil ary distance.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_94",
+    "content": "2. To adjust  he interpupil ary distance",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_95",
+    "content": "rotate the prism caps until both eyes",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_96",
+    "content": "coincide with the image in the",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_97",
+    "content": "1. Remove the lens protective cover.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_98",
+    "content": "2. Place the specimen on the working",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_99",
+    "content": "3. Focus the specimen with the left eye",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_100",
+    "content": "4. Rotate the right eyepiece ring until the",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_101",
+    "content": "images in each eyepiece coincide and",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_102",
+    "content": "oblique il uminator cap and remove",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_103",
+    "content": "3. Replace with a new halogen bulb.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_104",
+    "content": "4. Open the window in the base plate and",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_105",
+    "content": "fluorescent lamp of transmit ed",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_106",
+    "content": "1. Turn the focusing knob away or toward",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_107",
+    "content": "you until a clear image is viewed.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_108",
+    "content": "2. If the image is unclear, adjust  he",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_109",
+    "content": "then turn the focusing knob again.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_110",
+    "content": "the desired magnif cation and field of",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_111",
+    "content": "2. In most situations, it is recommended",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_112",
+    "content": "magnif cation, then move to a higher",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_113",
+    "content": "3. If the image is not clear to both eyes",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_114",
+    "content": "at  he same time, the diopter  ing may",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_115",
+    "content": "1. To adjust  he eyepiece for viewing with",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_116",
+    "content": "and left eyes, fol ow the fol owing",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_117",
+    "content": "a. Observe an image through the left",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_118",
+    "content": "eyepiece and bring a specif c point",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_119",
+    "content": "into focus using the focus knob.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_120",
+    "content": "adjustment for the left eyepiece,",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_121",
+    "content": "bring the same point into sharp",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_122",
+    "content": "c.Then bring the same point into",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_123",
+    "content": "focus through the right eyepiece",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_124",
+    "content": "d.With more than one viewer, each",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_125",
+    "content": "diopter  ing posit on for the left",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_126",
+    "content": "and right eyepieces, then before",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_127",
+    "content": "oblique il uminator cap and remove",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_128",
+    "content": "3. Replace with a new halogen bulb.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_129",
+    "content": "4. Open the window in the base plate",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_130",
+    "content": "and replace the halogen lamp or",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_131",
+    "content": "fluorescent lamp of transmit ed",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_132",
+    "content": "236 is a powerful fixed power compound",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_133",
+    "content": "microscope designed for biological studies such as specimen",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_134",
+    "content": "examination. It can also be used for examining bacteria and",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_135",
+    "content": "for general clinical and medical studies and other scientif c uses.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_136",
+    "content": "236 is a fixed power compound microscope.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_137",
+    "content": "It is constructed with two optical paths at  he same angle. It is",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_138",
+    "content": "ed with transmit ed il umination. By using this instrument,",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_139",
+    "content": "the user can observe specimens at magnif cation from 40x to",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_140",
+    "content": "0x by selecting the desired objective lens. Coarse and fine",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_141",
+    "content": "focus adjustments provide ac uracy and image detail. The rotating",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_142",
+    "content": "head al ows the user to posit on the eyepieces for maximum",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_143",
+    "content": "viewing comfort and easy ac es  to al  adjustment knobs.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_144",
+    "content": "Interpupil ary Slide Adjustment",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_145",
+    "content": "signs, signals and road markings",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_146",
+    "content": "chapter 2, you and your vehicle",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_147",
+    "content": "some of the controls in your vehicle. This chapter is a handy",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_148",
+    "content": "reference section that gives examples of the most common",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_149",
+    "content": "signs, signals and road markings that ke",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_150",
+    "content": "ways to read signs: by their shape, colour and",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_151",
+    "content": "the mes ages printed on them. Understanding these thre",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_152",
+    "content": "ifying signs wil  help you figure out  he meani",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_153",
+    "content": "2012 ful  year  esult and final div dend an",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_154",
+    "content": "2013 interim result and interim div dend an",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_155",
+    "content": "2013 ful  year  esults and final div dend an",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_156",
+    "content": "1 Indicative dates only, subject  o change/Board confirmation",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_157",
+    "content": "he City Recital Hal , Angel Place, Sydney",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_158",
+    "content": "commencing at 10.30am on Tuesday 23 October 2012.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_159",
+    "content": "Established in Sydney in 1837, and then",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_160",
+    "content": "known as The Australian Gas Light Company,",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_161",
+    "content": "the AGL busines  has an established history",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_162",
+    "content": "and reputation for serving the gas and",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_163",
+    "content": "in the Sydney Gazet e as a 'wonderful",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_164",
+    "content": "achievement of scientific knowledge, as isted",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_165",
+    "content": "by mechanical ingenuity.' Within two years,",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_166",
+    "content": "165 gas lamps were lighting the City of Sydney.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_167",
+    "content": "7KHUHglyph<c=3,font=/AAAAAU+ArialMT>ZDVglyph<c=3,font=/AAAAAU+ArialMT>Dglyph<c=3,font=/AAAAAU+ArialMT>FKDQJHglyph<c=3,font=/AAAAAU+ArialMT>WRglyph<c=3,font=/AAAAAU+ArialMT>WKHglyph<c=3,font=/AAAAAU+ArialMT>7(536glyph<c=3,font=/AAAAAU+ArialMT>FULWHULDglyph<c=3,font=/AAAAAU+ArialMT>LQglyph<c=3,font=/AAAAAU+ArialMT>glyph<c=21,font=/AAAAAU+ArialMT>glyph<c=19,font=/AAAAAU+ArialMT>glyph<c=20,font=/AAAAAU+ArialMT>glyph<c=21,font=/AAAAAU+ArialMT>glyph<c=3,font=/AAAAAU+ArialMT>WKDWglyph<c=3,font=/AAAAAU+ArialMT>DႇHFWVglyph<c=3,font=/AAAAAU+ArialMT>FLUFOLQJglyph<c=3,font=/AAAAAU+ArialMT>DUHDglyph<c=3,font=/AAAAAU+ArialMT>GLPHQVLRQglyph<c=3,font=/AAAAAU+ArialMT>E\\glyph<c=3,font=/AAAAAU+ArialMT>H[SDQGLQJglyph<c=3,font=/AAAAAU+ArialMT>WKHglyph<c=3,font=/AAAAAU+ArialMT>DUHDVglyph<c=3,font=/AAAAAU+ArialMT>WRglyph<c=3,font=/AAAAAU+ArialMT>SURYLGHglyph<c=3,font=/AAAAAU+ArialMT>",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_168",
+    "content": "improved obstacle protection. To indicate that  he new criteria had be",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_169",
+    "content": "the circling line of minimums. The new circling tables and explanatory information is located in the Legend of the TP",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_170",
+    "content": "7KHglyph<c=3,font=/AAAAAU+ArialMT>DS",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_171",
+    "content": "URDFKHVglyph<c=3,font=/AAAAAU+ArialMT>XVLQJglyph<c=3,font=/AAAAAU+ArialMT>VWDQGDUGglyph<c=3,font=/AAAAAU+ArialMT>FLUFOLQJglyph<c=3,font=/AAAAAU+ArialMT>DS",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_172",
+    "content": "URDFKglyph<c=3,font=/AAAAAU+ArialMT>DUHDVglyph<c=3,font=/AAAAAU+ArialMT>FDQglyph<c=3,font=/AAAAAU+ArialMT>EHglyph<c=3,font=/AAAAAU+ArialMT>LGHQWL¿HGglyph<c=3,font=/AAAAAU+ArialMT>E\\glyph<c=3,font=/AAAAAU+ArialMT>WKHglyph<c=3,font=/AAAAAU+ArialMT>DEVHQFHglyph<c=3,font=/AAAAAU+ArialMT>RIglyph<c=3,font=/AAAAAU+ArialMT>WKHglyph<c=3,font=/AAAAAU+ArialMT>",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_173",
+    "content": "$S O\\glyph<c=3,font=/AAAAAX+Arial-ItalicMT>6WDQGDUGglyph<c=3,font=/AAAAAX+Arial-ItalicMT>&LUFOLQJglyph<c=3,font=/AAAAAX+Arial-ItalicMT> $S",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_174",
+    "content": "URDFKglyph<c=3,font=/AAAAAX+Arial-ItalicMT>0DQHXYHULQJglyph<c=3,font=/AAAAAX+Arial-ItalicMT>5DGLXVglyph<c=3,font=/AAAAAX+Arial-ItalicMT>7 DEOH",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_175",
+    "content": "$S O\\glyph<c=3,font=/AAAAAX+Arial-ItalicMT>([SDQGHGglyph<c=3,font=/AAAAAX+Arial-ItalicMT>&LUFOLQJglyph<c=3,font=/AAAAAX+Arial-ItalicMT> $S",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_176",
+    "content": "URDFKglyph<c=3,font=/AAAAAX+Arial-ItalicMT>0DQHXYHULQJglyph<c=3,font=/AAAAAX+Arial-ItalicMT> $LUVSDFHglyph<c=3,font=/AAAAAX+Arial-ItalicMT>5DGLXVglyph<c=3,font=/AAAAAX+Arial-ItalicMT>",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_177",
+    "content": "The airport sketch is a depiction of the airport with emphasis on runway pat ern and related",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_178",
+    "content": "information, posit oned in either the lower left or lower  ight corner of the chart  o aid pi-",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_179",
+    "content": "lot recognit on of the airport from the air and to provide some information to aid on ground",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_180",
+    "content": "navigation of the airport. The runways are drawn to scale and oriented to true north. Runway",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_181",
+    "content": "dimensions (length and width) are shown for al  active runways.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_182",
+    "content": "Runway(s) are depicted based on what  ype and construction of the runway.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_183",
+    "content": "Taxiways and aprons are shaded grey. Other  unway features that may be shown are runway numbers, runway dimen-",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_184",
+    "content": "sions, runway slope, ar esting gear, and displaced threshold.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_185",
+    "content": "2WKHUglyph<c=3,font=/AAAAAU+ArialMT>LQIRUPDWLRQglyph<c=3,font=/AAAAAU+ArialMT>FRQFHUQLQJglyph<c=3,font=/AAAAAU+ArialMT>OLJKWLQJglyph<c=15,font=/AAAAAU+ArialMT>glyph<c=3,font=/AAAAAU+ArialMT>¿QDOglyph<c=3,font=/AAAAAU+ArialMT>DS",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_186",
+    "content": "URDFKglyph<c=3,font=/AAAAAU+ArialMT>EHDULQJVglyph<c=15,font=/AAAAAU+ArialMT>glyph<c=3,font=/AAAAAU+ArialMT>DLUSRUWglyph<c=3,font=/AAAAAU+ArialMT>EHDFRQglyph<c=15,font=/AAAAAU+ArialMT>glyph<c=3,font=/AAAAAU+ArialMT>REVWDFOHVglyph<c=15,font=/AAAAAU+ArialMT>glyph<c=3,font=/AAAAAU+ArialMT>FRQWUROglyph<c=3,font=/AAAAAU+ArialMT>WRZHU glyph<c=15,font=/AAAAAU+ArialMT>glyph<c=3,font=/AAAAAU+ArialMT>1$",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_187",
+    "content": "9$,'Vglyph<c=15,font=/AAAAAU+ArialMT>glyph<c=3,font=/AAAAAU+ArialMT>KHOL",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_188",
+    "content": "$LUSRUWglyph<c=3,font=/AAAABA+Arial-BoldMT>(OHYDWLRQglyph<c=3,font=/AAAABA+Arial-BoldMT>DQGglyph<c=3,font=/AAAABA+Arial-BoldMT>7 RXFKGRZQglyph<c=3,font=/AAAABA+Arial-BoldMT>=RQHglyph<c=3,font=/AAAABA+Arial-BoldMT>(OHYDWLRQ",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_189",
+    "content": "The airport elevation is shown enclosed within a box in the up",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_190",
+    "content": "er left corner of the sketch box and the touchdown zone",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_191",
+    "content": "elevation (TDZE) is shown in the up",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_192",
+    "content": "er  ight corner of the sketch box. The airport elevation is the highest point of an",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_193",
+    "content": "DLUSRUW¶Vglyph<c=3,font=/AAAAAU+ArialMT>XVDEOHglyph<c=3,font=/AAAAAU+ArialMT>UXQZD\\Vglyph<c=3,font=/AAAAAU+ArialMT>PHDVXUHGglyph<c=3,font=/AAAAAU+ArialMT>LQglyph<c=3,font=/AAAAAU+ArialMT>IH",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_194",
+    "content": "Wglyph<c=3,font=/AAAAAU+ArialMT>IURPglyph<c=3,font=/AAAAAU+ArialMT>PHDQglyph<c=3,font=/AAAAAU+ArialMT>VHDglyph<c=3,font=/AAAAAU+ArialMT>OHYHOglyph<c=17,font=/AAAAAU+ArialMT>glyph<c=3,font=/AAAAAU+ArialMT>7KHglyph<c=3,font=/AAAAAU+ArialMT> 7'=(glyph<c=3,font=/AAAAAU+ArialMT>LVglyph<c=3,font=/AAAAAU+ArialMT>WKHglyph<c=3,font=/AAAAAU+ArialMT>KLJKHVWglyph<c=3,font=/AAAAAU+ArialMT>HOHYDWLRQglyph<c=3,font=/AAAAAU+ArialMT>LQglyph<c=3,font=/AAAAAU+ArialMT>WKHglyph<c=3,font=/AAAAAU+ArialMT>¿UVWglyph<c=3,font=/AAAAAU+ArialMT>glyph<c=22,font=/AAAAAU+ArialMT>glyph<c=15,font=/AAAAAU+ArialMT>glyph<c=19,font=/AAAAAU+ArialMT>",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_195",
+    "content": "glyph<c=19,font=/AAAAAU+ArialMT>glyph<c=3,font=/AAAAAU+ArialMT>IH",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_196",
+    "content": "Wglyph<c=3,font=/AAAAAU+ArialMT>RIglyph<c=3,font=/AAAAAU+ArialMT>",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_197",
+    "content": "the landing surface. Circling only ap",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_198",
+    "content": "Chart Users' Guide - Terminal Procedures Publication (TP",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_199",
+    "content": "Figure 1: Four examples of complex page layouts across different document categories",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_200",
+    "content": "PDF document conversion, layout segmentation, object-detection, data set, Machine Learning",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_201",
+    "content": "Birgit Pfitzmann, Christoph Auer, Michele Dolfi, Ahmed S. Nassar, and Peter Staar. 2022. DocLayNet: A Large Human-Annotated Dataset for DocumentLayout Analysis. In Proceedings of the 28th ACM SIGKDD Conference on Knowledge Discovery and Data Mining (KDD '22), August 14-18, 2022, Washington, DC, USA. ACM, New York, NY, USA, 9 pages. https://doi.org/10.1145/ 3534678.3539043",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_202",
+    "content": "Despite the substantial improvements achieved with machine-learning (ML) approaches and deep neural networks in recent years, document conversion remains a challenging problem, as demonstrated by the numerous public competitions held on this topic [1-4]. The challenge originates from the huge variability in PDF documents regarding layout, language and formats (scanned, programmatic or a combination of both). Engineering a single ML model that can be applied on all types of documents and provides high-quality layout segmentation remains to this day extremely challenging [5]. To highlight the variability in document layouts, we show a few example documents from the DocLayNet dataset in Figure 1. Figure 2: Title page of the DocLayNet paper (arxiv.org/pdf/2206.01062) - left PDF, right rendered Markdown. If recognized, metadata such as authors are appearing first under the title. Text content inside figures is currently dropped, the caption is retained and linked to the figure in the JSON representation (not shown).",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_203",
+    "content": "KDD '22, August 14-18, 2022, Washington, DC, USA Birgit Pfitzmann, Christoph Auer, Michele Dolfi, Ahmed S. Nassar, and Peter Staar",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_204",
+    "content": "Table 2: Prediction performance (mAP@0.5-0.95) of object detection networks on DocLayNet test set. The MRCNN (Mask R-CNN) and FRCNN (Faster R-CNN) models with ResNet-50 or ResNet-101 backbone were trained based on the network architectures from the detectron2 model zoo (Mask R-CNN R50, R101-FPN 3x, Faster R-CNN R101-FPN 3x), with default configurations. The YOLO implementation utilized was YOLOv5x6 [13]. All models were initialised using pre-trained weights from the COCO 2017 dataset.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_205",
+    "content": "to avoid this at any cost in order to have clear, unbiased baseline numbers for human document-layout annotation. Third, we introduced the feature of snapping boxes around text segments to obtain a pixel-accurate annotation and again reduce time and effort. The CCS annotation tool automatically shrinks every user-drawn box to the minimum bounding-box around the enclosed text-cells for all purely text-based segments, which excludes only Table and Picture . For the latter, we instructed annotation staff to minimise inclusion of surrounding whitespace while including all graphical lines. A downside of snapping boxes to enclosed text cells is that some wrongly parsed PDF pages cannot be annotated correctly and need to be skipped. Fourth, we established a way to flag pages as rejected for cases where no valid annotation according to the label guidelines could be achieved. Example cases for this would be PDF pages that render incorrectly or contain layouts that are impossible to capture with non-overlapping rectangles. Such rejected pages are not contained in the final dataset. With all these measures in place, experienced annotation staff managed to annotate a single page in a typical timeframe of 20s to 60s, depending on its complexity.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_206",
+    "content": "The primary goal of DocLayNet is to obtain high-quality ML models capable of accurate document-layout analysis on a wide variety of challenging layouts. As discussed in Section 2, object detection models are currently the easiest to use, due to the standardisation of ground-truth data in COCO format [16] and the availability of general frameworks such as detectron2 [17]. Furthermore, baseline numbers in PubLayNet and DocBank were obtained using standard object detection models such as Mask R-CNN and Faster R-CNN. As such, we will relate to these object detection methods in this",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_207",
+    "content": "chalenongayouls ground-vuth dawa such WC",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_208",
+    "content": "Figure 5: Prediction performance (mAP@0.5-0.95) of a Mask R-CNNnetworkwithResNet50backbonetrainedonincreasing fractions of the DocLayNet dataset. The learning curve flattens around the 80% mark, indicating that increasing the size of the DocLayNet dataset with similar data will not yield significantly better predictions.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_209",
+    "content": "paper and leave the detailed evaluation of more recent methods mentioned in Section 2 for future work.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_210",
+    "content": "In this section, we will present several aspects related to the performance of object detection models on DocLayNet. Similarly as in PubLayNet, we will evaluate the quality of their predictions using mean average precision (mAP) with 10 overlaps that range from 0.5 to 0.95 in steps of 0.05 (mAP@0.5-0.95). These scores are computed by leveraging the evaluation code provided by the COCO API [16].",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_211",
+    "content": "Baselines for Object Detection",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_212",
+    "content": "In Table 2, we present baseline experiments (given in mAP) on Mask R-CNN [12], Faster R-CNN [11], and YOLOv5 [13]. Both training and evaluation were performed on RGB images with dimensions of 1025 × 1025 pixels. For training, we only used one annotation in case of redundantly annotated pages. As one can observe, the variation in mAP between the models is rather low, but overall between 6 and 10% lower than the mAP computed from the pairwise human annotations on triple-annotated pages. This gives a good indication that the DocLayNet dataset poses a worthwhile challenge for the research community to close the gap between human recognition and ML approaches. It is interesting to see that Mask R-CNN and Faster R-CNN produce very comparable mAP scores, indicating that pixel-based image segmentation derived from bounding-boxes does not help to obtain better predictions. On the other hand, the more recent Yolov5x model does very well and even out-performs humans on selected labels such as Text , Table and Picture . This is not entirely surprising, as Text , Table and Picture are abundant and the most visually distinctive in a document.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_213",
+    "content": "Baselines for Object Detection",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_214",
+    "content": "Figure 3: Page 6 of the DocLayNet paper. If recognized, metadata such as authors are appearing first under the title. Elements recognized as page headers or footers are suppressed in Markdown to deliver uninterrupted content in reading order. Tables are inserted in reading order. The paragraph in '5. Experiments' wrapping over the column end is broken up in two and interrupted by the table.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_215",
+    "content": "KDD '22, August 14-18, 2022, Washington, DC, USA",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_216",
+    "content": "Birgit Pfitzmann, Christoph Auer, Michele Dolfi, Ahmed S. Nassar, and Peter Staar",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_217",
+    "content": "Table 1: DocLayNet dataset overview. Along with the frequency of each class label, we present the relative occurrence (as %",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_218",
+    "content": "between pairwise annotations from the triple-annotated pages, from which we obtain accuracy ranges.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_219",
+    "content": "of row 'Total') in the train, test and validation sets. The inter-annotator agreement is computed as the mAP@0.5-0.95 metric",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_220",
+    "content": "include publication repositories such as arXiv",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_221",
+    "content": "Table 1: DocLayNet dataset overview. Along with the frequency of each class label, we present the relative occurrence (as % of row \"Total\") in the train, test and validation sets. The inter-annotator agreement is computed as the mAP@0.5-0.95 metric between pairwise annotations from the triple-",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_222",
+    "content": "annotated pages, from which we obtain accuracy ranges.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_223",
+    "content": "page. Specificity ensures that the choice of label is not ambiguous,",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_224",
+    "content": "Figure 3: Corpus Conversion Service annotation user inter-",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_225",
+    "content": "face. The PDF page is shown in the background, with over-",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_226",
+    "content": "laid text-cells (in darker shades). The annotation boxes can",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_227",
+    "content": "be drawn by dragging a rectangle over each segment with",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_228",
+    "content": "the respective label from the palette on the right.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_229",
+    "content": "company websites as well as data directory services for financial",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_230",
+    "content": "reports and patents. Scanned documents were excluded wherever",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_231",
+    "content": "possible because they can be rotated or skewed. This would not",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_232",
+    "content": "allow us to perform annotation with rectangular bounding-boxes",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_233",
+    "content": "and therefore complicate the annotation process.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_234",
+    "content": "Preparation work included uploading and parsing the sourced",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_235",
+    "content": "PDF documents in the Corpus Conversion Service (CCS) [22], a",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_236",
+    "content": "cloud-native platform which provides a visual annotation interface",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_237",
+    "content": "and allows for dataset inspection and analysis. The annotation in-",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_238",
+    "content": "terface of CCS is shown in Figure 3. The desired balance of pages",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_239",
+    "content": "between the different document categories was achieved by se-",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_240",
+    "content": "lective subsampling of pages with certain desired properties. For",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_241",
+    "content": "example, we made sure to include the title page of each document",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_242",
+    "content": "and bias the remaining page selection to those with figures or",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_243",
+    "content": "tables. The latter was achieved by leveraging pre-trained object",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_244",
+    "content": "detection models from PubLayNet, which helped us estimate how",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_245",
+    "content": "many figures and tables a given page contains.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_246",
+    "content": "Phase 2: Label selection and guideline.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_247",
+    "content": "lected documents and identified the most common structural fea-",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_248",
+    "content": "tures they exhibit. This was achieved by identifying recurrent layout",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_249",
+    "content": "elements and lead us to the definition of 11 distinct class labels.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_250",
+    "content": "Critical factors that were considered for the choice of these class",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_251",
+    "content": "labels were (1) the overall occurrence of the label, (2) the specificity",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_252",
+    "content": "of the label, (3) recognisability on a single page (i.e. no need for",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_253",
+    "content": "context from previous or next page) and (4) overall coverage of the",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_254",
+    "content": "we distributed the annotation workload and performed continuous be annotated. We refrained from class labels that are very specific",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_255",
+    "content": "only. For phases three and four, a group of 40 dedicated annotators while coverage ensures that all meaningful items on a page can",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_256",
+    "content": "quality controls. Phase one and two required a small team of experts to a document category, such as",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_257",
+    "content": "Scientific Articles were assembled and supervised.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_258",
+    "content": "category. We also avoided class labels that are tightly linked to the",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_259",
+    "content": "Phase 1: Data selection and preparation.",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_260",
+    "content": "teria for documents were described in Section 3. A large effort went into ensuring that all documents are free to use. The data sources in DocBank, are often only distinguishable by discriminating on 3 https://arxiv.org/ Figure 4: Table 1 from the DocLayNet paper in the original PDF (A), as rendered Markdown (B) and in JSON representation (C). Spanning table cells, such as the multi-column header 'triple interannotator mAP@0.5-0.95 (%)', is repeated for each column in the Markdown representation (B), which guarantees that every data point can be traced back to row and column headings only by its grid coordinates in the table. In the JSON representation, the span information is reflected in the fields of each table cell (C).",
+    "source": "table_images.pdf"
+  },
+  {
+    "id": "table_images.pdf_chunk_261",
+    "content": "semantics of the text. Labels such as and",
+    "source": "table_images.pdf"
+  }
+]

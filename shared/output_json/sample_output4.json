@@ -1,0 +1,400 @@
+{
+  "schema_name": "DoclingDocument",
+  "version": "1.3.0",
+  "name": "onlytext2",
+  "origin": {
+    "mimetype": "application/pdf",
+    "binary_hash": 18428246824262736709,
+    "filename": "onlytext2.pdf"
+  },
+  "furniture": {
+    "self_ref": "#/furniture",
+    "children": [],
+    "content_layer": "furniture",
+    "name": "_root_",
+    "label": "unspecified"
+  },
+  "body": {
+    "self_ref": "#/body",
+    "children": [
+      {
+        "$ref": "#/texts/0"
+      },
+      {
+        "$ref": "#/texts/1"
+      },
+      {
+        "$ref": "#/groups/0"
+      },
+      {
+        "$ref": "#/texts/5"
+      },
+      {
+        "$ref": "#/groups/1"
+      },
+      {
+        "$ref": "#/texts/8"
+      },
+      {
+        "$ref": "#/groups/2"
+      }
+    ],
+    "content_layer": "body",
+    "name": "_root_",
+    "label": "unspecified"
+  },
+  "groups": [
+    {
+      "self_ref": "#/groups/0",
+      "parent": {
+        "$ref": "#/body"
+      },
+      "children": [
+        {
+          "$ref": "#/texts/2"
+        },
+        {
+          "$ref": "#/texts/3"
+        },
+        {
+          "$ref": "#/texts/4"
+        }
+      ],
+      "content_layer": "body",
+      "name": "list",
+      "label": "list"
+    },
+    {
+      "self_ref": "#/groups/1",
+      "parent": {
+        "$ref": "#/body"
+      },
+      "children": [
+        {
+          "$ref": "#/texts/6"
+        },
+        {
+          "$ref": "#/texts/7"
+        }
+      ],
+      "content_layer": "body",
+      "name": "list",
+      "label": "list"
+    },
+    {
+      "self_ref": "#/groups/2",
+      "parent": {
+        "$ref": "#/body"
+      },
+      "children": [
+        {
+          "$ref": "#/texts/9"
+        }
+      ],
+      "content_layer": "body",
+      "name": "list",
+      "label": "list"
+    }
+  ],
+  "texts": [
+    {
+      "self_ref": "#/texts/0",
+      "parent": {
+        "$ref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 72.0,
+            "t": 717.778,
+            "r": 204.767,
+            "b": 708.944,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            28
+          ]
+        }
+      ],
+      "orig": "PDF Extraction Complexities:",
+      "text": "PDF Extraction Complexities:",
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/1",
+      "parent": {
+        "$ref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 72.0,
+            "t": 704.554,
+            "r": 167.579,
+            "b": 695.721,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            20
+          ]
+        }
+      ],
+      "orig": "Layout and Structure",
+      "text": "Layout and Structure",
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/2",
+      "parent": {
+        "$ref": "#/groups/0"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 90.0,
+            "t": 679.331,
+            "r": 528.618,
+            "b": 644.049,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            269
+          ]
+        }
+      ],
+      "orig": "● Inconsistent Layout: Documents as PDFs often have inconsistent layout, which means that the content is positioned in a nondeterministic manner, making it hard to programmatically extract text, tables, or images in a way that retains the original meaning or structure.",
+      "text": "● Inconsistent Layout: Documents as PDFs often have inconsistent layout, which means that the content is positioned in a nondeterministic manner, making it hard to programmatically extract text, tables, or images in a way that retains the original meaning or structure.",
+      "enumerated": false,
+      "marker": "-"
+    },
+    {
+      "self_ref": "#/texts/3",
+      "parent": {
+        "$ref": "#/groups/0"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 90.0,
+            "t": 639.659,
+            "r": 538.595,
+            "b": 604.377,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            275
+          ]
+        }
+      ],
+      "orig": "● Lack of Structural Metadata: PDFs frequently lack explicit structural metadata, such as headings, paragraphs, or the semantics of tables. This absence complicates the identification of different content types and the understanding of their hierarchy and interrelationships.",
+      "text": "● Lack of Structural Metadata: PDFs frequently lack explicit structural metadata, such as headings, paragraphs, or the semantics of tables. This absence complicates the identification of different content types and the understanding of their hierarchy and interrelationships.",
+      "enumerated": false,
+      "marker": "-"
+    },
+    {
+      "self_ref": "#/texts/4",
+      "parent": {
+        "$ref": "#/groups/0"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 90.0,
+            "t": 599.987,
+            "r": 525.655,
+            "b": 564.706,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            247
+          ]
+        }
+      ],
+      "orig": "● Complex Layouts and Formats: Documents with multi-column layouts, footnotes, sidebars, or tables pose additional challenges. Typically, extraction tools may strip away context during the process, diminishing the usefulness of the data retrieved.",
+      "text": "● Complex Layouts and Formats: Documents with multi-column layouts, footnotes, sidebars, or tables pose additional challenges. Typically, extraction tools may strip away context during the process, diminishing the usefulness of the data retrieved.",
+      "enumerated": false,
+      "marker": "-"
+    },
+    {
+      "self_ref": "#/texts/5",
+      "parent": {
+        "$ref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 72.0,
+            "t": 548.316,
+            "r": 192.579,
+            "b": 539.482,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            25
+          ]
+        }
+      ],
+      "orig": "Content Quality and Types",
+      "text": "Content Quality and Types",
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/6",
+      "parent": {
+        "$ref": "#/groups/1"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 90.0,
+            "t": 523.092,
+            "r": 532.318,
+            "b": 487.81,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            283
+          ]
+        }
+      ],
+      "orig": "● Quality Issues: When dealing with scanned PDFs, the quality of the scan can significantly affect the ability to extract text. Poor quality scans may result in OCR errors, missing characters, or incorrect text, requiring manual correction or sophisticated error-handling algorithms.",
+      "text": "● Quality Issues: When dealing with scanned PDFs, the quality of the scan can significantly affect the ability to extract text. Poor quality scans may result in OCR errors, missing characters, or incorrect text, requiring manual correction or sophisticated error-handling algorithms.",
+      "enumerated": false,
+      "marker": "-"
+    },
+    {
+      "self_ref": "#/texts/7",
+      "parent": {
+        "$ref": "#/groups/1"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 90.0,
+            "t": 483.42,
+            "r": 516.914,
+            "b": 448.139,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            244
+          ]
+        }
+      ],
+      "orig": "● Multimodal Content: PDFs can contain a mix of text, images, graphics, and sometimes even multimedia elements. Extracting data from these varied content types requires different approaches and technologies, complicating the extraction process.",
+      "text": "● Multimodal Content: PDFs can contain a mix of text, images, graphics, and sometimes even multimedia elements. Extracting data from these varied content types requires different approaches and technologies, complicating the extraction process.",
+      "enumerated": false,
+      "marker": "-"
+    },
+    {
+      "self_ref": "#/texts/8",
+      "parent": {
+        "$ref": "#/body"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "section_header",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 72.0,
+            "t": 431.749,
+            "r": 180.348,
+            "b": 422.915,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            23
+          ]
+        }
+      ],
+      "orig": "Security and Encryption",
+      "text": "Security and Encryption",
+      "level": 1
+    },
+    {
+      "self_ref": "#/texts/9",
+      "parent": {
+        "$ref": "#/groups/2"
+      },
+      "children": [],
+      "content_layer": "body",
+      "label": "list_item",
+      "prov": [
+        {
+          "page_no": 1,
+          "bbox": {
+            "l": 90.0,
+            "t": 406.525,
+            "r": 537.516,
+            "b": 344.628,
+            "coord_origin": "BOTTOMLEFT"
+          },
+          "charspan": [
+            0,
+            397
+          ]
+        }
+      ],
+      "orig": "● Security Features & Encrypted Content: Some PDFs contain embedded or encrypted content, which can require additional steps to access and decode before extraction is possible. PDFs can have security settings that restrict copying, printing, or editing of the document. These features can prevent extraction tools from accessing the content unless appropriate permissions are provided or bypassed.",
+      "text": "● Security Features & Encrypted Content: Some PDFs contain embedded or encrypted content, which can require additional steps to access and decode before extraction is possible. PDFs can have security settings that restrict copying, printing, or editing of the document. These features can prevent extraction tools from accessing the content unless appropriate permissions are provided or bypassed.",
+      "enumerated": false,
+      "marker": "-"
+    }
+  ],
+  "pictures": [],
+  "tables": [],
+  "key_value_items": [],
+  "form_items": [],
+  "pages": {
+    "1": {
+      "size": {
+        "width": 612.0,
+        "height": 792.0
+      },
+      "page_no": 1
+    }
+  }
+}
