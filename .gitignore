@@ -1,0 +1,22 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environments
+.venv/
+venv/
+.env
+
+# Logs and temp
+*.log
+*.db
+.parsed_outputs/
+.parsed_cache/
+
+# Output files
+shared/output_jsons/
+shared/input_files/
+
+# IDE files
+.vscode/
+*.ipynb_checkpoints
