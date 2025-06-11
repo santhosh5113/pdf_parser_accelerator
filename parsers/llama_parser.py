@@ -1,13 +1,28 @@
-# parsers/llamaparse_parser.py
-'''
 import os
 import sys
 import json
 from llama_cloud_services import LlamaParse
 
+def serialize_page_content(content):
+    """Helper function to ensure content is JSON serializable."""
+    if content is None:
+        return None
+    
+    if isinstance(content, (str, int, float, bool)):
+        return content
+    
+    if isinstance(content, (list, tuple)):
+        return [serialize_page_content(item) for item in content]
+    
+    if isinstance(content, dict):
+        return {k: serialize_page_content(v) for k, v in content.items()}
+    
+    # Convert any other type to string representation
+    return str(content)
+
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python parsers/llamaparse_parser.py <input_pdf_path> <output_json_path>")
+        print("Usage: python parsers/llama_parser.py <input_pdf_path> <output_json_path>")
         sys.exit(1)
 
     input_pdf = sys.argv[1]
@@ -28,78 +43,31 @@ def main():
             num_workers=2,
             verbose=True,
             language="en",
+            structured_output=True  # Enable JSON output
         )
 
-        result = parser.parse(input_pdf)
+        # Parse the PDF
+        result = parser.parse_file(input_pdf)
 
-        full_result = []
-        for page in result.pages:
-           full_result.append({
-    "text": page.text,
-    "markdown": page.md,
-    "images": [img.__dict__ for img in getattr(page, "images", [])],
-    "layout": getattr(page, "layout", None)
-})
+        # Extract structured data from each page
+        output_data = []
+        for page in result:
+            page_data = {
+                "page_number": page.pageNumber,
+                "content": page.structuredData if hasattr(page, "structuredData") else page.text,
+            }
+            output_data.append(page_data)
 
-        os.makedirs(os.path.dirname(output_json), exist_ok=True)
-        with open(output_json, "w", encoding="utf-8") as f:
-            json.dump({"pages": full_result}, f, indent=2, ensure_ascii=False)
+        # Save to JSON file
+        with open(output_json, 'w', encoding='utf-8') as f:
+            json.dump(output_data, f, ensure_ascii=False, indent=2)
 
-        print("✅ LlamaParse JSON saved successfully!")
-
-    except Exception as e:
-        print(f"❌ Error while parsing with LlamaParse: {e}")
-        sys.exit(1)
-
-if __name__ == "__main__":
-    main()'''
-
-import os
-import sys
-from llama_cloud_services import LlamaParse
-
-def main():
-    if len(sys.argv) != 3:
-        print("Usage: python parsers/llamaparse_parser.py <input_pdf_path> <output_md_path>")
-        sys.exit(1)
-
-    input_pdf = sys.argv[1]
-    output_md = sys.argv[2]
-
-    print(f"📥 Parsing PDF with LlamaParse: {input_pdf}")
-    print(f"📤 Output will be saved to: {output_md}")
-
-    api_key = os.getenv("LLAMA_CLOUD_API_KEY")
-    if not api_key:
-        print("❌ Error: LLAMA_CLOUD_API_KEY is not set in environment variables.")
-        sys.exit(1)
-
-    try:
-        parser = LlamaParse(
-            api_key=api_key,
-            premium_mode=True,
-            num_workers=2,
-            verbose=True,
-            language="en",
-        )
-
-        result = parser.parse(input_pdf)
-
-        # Concatenate all markdown content from each page
-        all_md = "\n\n".join(page.md for page in result.pages if page.md)
-
-        # Ensure output directory exists
-        os.makedirs(os.path.dirname(output_md), exist_ok=True)
-
-        # Save markdown text to output file
-        with open(output_md, "w", encoding="utf-8") as f:
-            f.write(all_md)
-
-        print("✅ LlamaParse markdown saved successfully!")
+        print(f"✅ Successfully parsed PDF and saved JSON to: {output_json}")
 
     except Exception as e:
-        print(f"❌ Error while parsing with LlamaParse: {e}")
+        print(f"❌ Error parsing PDF: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":
     main()
+
