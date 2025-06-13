@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  pdf_parser:
+    build:
+      context: ../..  # Root directory
+      dockerfile: docker/faiss/Dockerfile
+    volumes:
+      - ../../:/app
+      - pdf_uploads:/app/uploads
+      - pdf_processed:/app/processed
+      - faiss_index:/app/faiss_index
+    environment:
+      - VECTOR_STORE_TYPE=faiss
+      - FAISS_INDEX_PATH=/app/faiss_index
+      - EMBEDDING_MODEL=sentence-transformers/all-mpnet-base-v2
+      - UPLOAD_DIR=/app/uploads
+      - PROCESSED_DIR=/app/processed
+    ports:
+      - "8000:8000"
+    command: uvicorn api.main:app --host 0.0.0.0 --port 8000 --reload
+    restart: unless-stopped
+
+volumes:
+  pdf_uploads:
+  pdf_processed:
+  faiss_index: 

@@ -1,22 +1,53 @@
-# Python cache
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Environments
-.venv/
+# Virtual Environment
 venv/
+ENV/
 .env
 
-# Logs and temp
-*.log
-*.db
-.parsed_outputs/
-.parsed_cache/
-
-# Output files
-shared/output_jsons/
-shared/input_files/
-
-# IDE files
+# IDE
+.idea/
 .vscode/
-*.ipynb_checkpoints
+*.swp
+*.swo
+
+# Vector store data
+faiss_index/
+chroma_db/
+qdrant_data/
+volumes/
+milvus/
+
+# Project specific
+uploads/
+processed/
+*.log
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Docker
+.docker/

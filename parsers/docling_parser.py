@@ -53,22 +53,22 @@ def main():
         sys.exit(1)
 
     # 2. Export to JSON
-    '''try:
+    try:
         json_data = result.document.export_to_dict()
         with open(output_json, "w", encoding="utf-8") as f:
             json.dump(json_data, f, ensure_ascii=False, indent=2)
         print("✅ JSON saved successfully.")
     except Exception as e:
-        print(f"❌ Failed to save JSON: {e}")'''
+        print(f"❌ Failed to save JSON: {e}")
 
     # 3. Export to Markdown
-    try:
+    '''try:
         markdown_text = result.document.export_to_markdown()
         with open(output_md, "w", encoding="utf-8") as f:
             f.write(markdown_text)
         print("✅ Markdown saved successfully.")
     except Exception as e:
-        print(f"⚠️ Skipped Markdown export: {e}")
+        print(f"⚠️ Skipped Markdown export: {e}")'''
 
     # 4. Extract images
     try:

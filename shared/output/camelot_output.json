@@ -1,0 +1,1292 @@
+{
+  "filename": "with_tables.pdf",
+  "total_pages": 16,
+  "parser": "camelot",
+  "flavor": "lattice",
+  "pages": [
+    {
+      "page_number": 2,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 100.0,
+          "whitespace": 77.78,
+          "columns": 3,
+          "rows": 3,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                ""
+              ],
+              [
+                "",
+                "What is Active Voice??????\nIn active sentences, the subject is active or the subject performs the\nactions.\nFor example: The cow (Subject) is eating (Verb) grass (Object).-Active\nVoice\nWhat is Passive Voice??????\nIn passive sentences, the subject is no longer active or the subject is\nacted upon by the verb.\nFor\nexample: Grass\n(Subject)\nis\nbeing\neaten\n(Verb)\nby\nthe\ncow\n(Object).—Passive Voice",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 3,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 100.0,
+          "whitespace": 77.78,
+          "columns": 3,
+          "rows": 3,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                ""
+              ],
+              [
+                "",
+                "When do I use passive voice?\nIn some sentences, passive voice can be perfectly acceptable. You might use it in the following cases:\n1.The actor is unknown:\nEg: The cave paintings of Ajanta & Ellora were made in the Upper Old Stone Age.\n[We don’t know who made\nthem.]\n2.The actor is irrelevant:\nEg: An experimental solar nuclear plant will be built in the Australian desert.\n[We are not interested in who is\nbuilding it.]\n3. You are talking about a general truth:\nEg: Rules are made to be broken. [By whomever, whenever.]\n4. You want to emphasize the person or thing acted on. For example, it may be your main topic:\nEg:\nInsulin was first discovered in 1921 by researchers at the University of Toronto.\nIt is still the only treatment\navailable for diabetes.\n5. You are writing in a scientific genre that traditionally relies on passive voice. Passive voice is often preferred\nin\nlab\nreports\nand\nscientific\nresearch\npapers, most\nnotably\nin\nthe Materials\nand Methods\nsection:\nEg: The sodium hydroxide was dissolved in water. This solution was then titrated with hydrochloric acid.",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 4,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 75.64,
+          "whitespace": 88.57,
+          "columns": 7,
+          "rows": 5,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "Rules of transformation - Active voice to Passive voice:",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "Active Voice\nI prepare for IELTS exam.",
+                "",
+                "Passive Voice\nIELTS exam is prepared by me.",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 5,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 100.0,
+          "whitespace": 77.78,
+          "columns": 3,
+          "rows": 3,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                ""
+              ],
+              [
+                "",
+                "Rules of transformation - Active voice to Passive voice:\n•\nFind subject, object and the main verb.\n•\nConvert the object into subject.\n•\nUse the suitable helping verb or auxiliary verb according to the tense.\n✓ If helping verb is given, use verb as it is. But note that the helping verb\nused should be according to the object.\n•\nConvert the verb into past participle.\n•\nUse the preposition ‘by’(in some sentences the use of ‘by’ is not \nrequired when the doer is not mentioned in the sentence).\n•\nConvert the subject into object.",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 6,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 0.89,
+          "whitespace": 98.79,
+          "columns": 15,
+          "rows": 11,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "Types of Pronouns - Introduction",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 7,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 100.0,
+          "whitespace": 88.89,
+          "columns": 3,
+          "rows": 3,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 8,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 100.0,
+          "whitespace": 91.67,
+          "columns": 3,
+          "rows": 4,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 9,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 80.13,
+          "whitespace": 93.85,
+          "columns": 5,
+          "rows": 13,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "Active And Passive Voice With Tenses \nSimple Present Tense - Structure: is, am, are + Past Participle\nActive Voice \nHe lights the candle. \nHe does not light the candle. \nDo you eat chocolate? \nPresent Continuous Tense - Structure: is, am, are + being + Past Participle\nActive Voice \nI am driving a car.\nI am not driving a car. \nAm I driving a car?",
+                "Passive Voice \nThe candle is lighted by him.\nThe candle is not lighted by him. \nIs chocolate eaten by you?",
+                "Passive Voice \nA car is being driven by me. \nA car is not being driven by me. \nIs a car being driven by me?",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 10,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 71.38,
+          "whitespace": 92.31,
+          "columns": 5,
+          "rows": 13,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                "",
+                "",
+                "1) has not been stolen \n2) been stolen \n3) was not finished"
+              ],
+              [
+                "",
+                "Present Perfect Tense \nStructure: has/have + been + Past Participle\nActive Voice \nShe has stolen my book.\nShe has not stolen my book.\nHas she stolen my book?\nSimple Past Tense \nStructure: was, were + Past Participle\nAns:\nActive Voice \nShe finished the work.\nShe didn’t finish the work.\nDid she finish the work?",
+                "Passive Voice \nMy book has been stolen by her.\nMy book 1) _____by her.\nHas my book 2) ____by her?",
+                "Passive Voice \nThe work was finished by her.\n4) Finished\nThe work 3)______by her.\nWas the work 4)______by her?",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 11,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 70.81,
+          "whitespace": 92.31,
+          "columns": 5,
+          "rows": 13,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                "",
+                "",
+                "1) were not revised \n4) had been completed \n5) been completed"
+              ],
+              [
+                "",
+                "Past Continuous Tense \nStructure: was/were + being + Past Participle\nActive Voice \nHe was revising his books. \nHe was not revising his books.\nWas he revising his books? \nAns:\nPast Perfect Tense \n2) Were\nStructure: had + been + Past Participle\n3) Revised\nActive Voice \nI had completed the assignment. \nI had not completed the assignment. \nHad I completed the assignment?",
+                "Passive Voice \nHis books were being revised by him. \nHis books 1)______by him. \n2) _____ his books 3) _____by him?",
+                "Passive Voice \nThe assignment 4)_____by me. \nThe assignment had not been completed by me. \nHad the assignment 5)______by me?",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 12,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 68.92,
+          "whitespace": 92.31,
+          "columns": 5,
+          "rows": 13,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2,
+              3,
+              4
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                "",
+                "",
+                "2) will not be paid \n4) shall not have been done \n5) have been done"
+              ],
+              [
+                "",
+                "Simple Future Tense \nStructure: will/shall + be + Past Participle\nActive Voice \nMy uncle will pay my tuition fee. \nMy uncle will not pay my tuition fee. \nWill my uncle pay my tuition fee? \nFuture Perfect Tense \nStructure: will/shall + have been + Past Participle\nAns:\nActive Voice \nWe shall have done our home-work. \nWe shall not have done our home-work.\nShall we have done our home work?",
+                "1) will be paid \nPassive Voice \nOur home -work shall have been done by us.\n3) be paid \nOur home -work 4) ____by us.\nShall our home work 5) ____by us?",
+                "Passive Voice \nMy tuition fee 1)_____by my uncle\nMy tuition fee 2) _____ by my uncle.\nWill my tuition fee 3) _____by my uncle?",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 13,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 100.0,
+          "whitespace": 77.78,
+          "columns": 3,
+          "rows": 3,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                ""
+              ],
+              [
+                "",
+                "Important Note:\nIn the following, tenses cannot be changed into passive form:\n•\nPresent perfect continuous tense\n•\nPast perfect continuous tense\n•\nFuture perfect continuous tense\n•\nFuture perfect tense\nwe use the same sentence in passive voice.",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 16,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 95.39,
+          "whitespace": 87.5,
+          "columns": 2,
+          "rows": 8,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS   \nActive and Passive voice with Imperative Sentences\nThese are the sentences\nin which we express our\nfeeling and emotions\nlike command, order, advice, and\nrequest.\nRules :\n1. Lets + new object + be/Not be +past participle.\n2. For\nsentences containing, Request, advice and order, we will use you are Requested to, advised to and\nordered to.\nNote:\nAlways remove please and kind if they are given in the sentence.\nActive Voice\nShut the door. \nPost the letter at once. \nAlways speak the truth. \n3)_____the cow. \nLet him help his brother. \n4) be helped",
+                "Passive Voice\nLet the door 1)____. \nPost the letter at once. \nAns:\nLet the truth always 2) ____. \n1) be shut\nLet the cow not be starved.\n2) be spoken\n3) Do not starve \nLet his brother 4)____by him."
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 17,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 76.54,
+            "y0": 36.48,
+            "x1": 879.62,
+            "y1": 210.48
+          },
+          "accuracy": 95.04,
+          "whitespace": 0.0,
+          "columns": 2,
+          "rows": 6,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "Active Voice",
+                "Passive Voice"
+              ],
+              [
+                "1)____your room.",
+                "Let your room be cleaned."
+              ],
+              [
+                "Learn your lesson.",
+                "Ans:\nLet your lesson 2) _____."
+              ],
+              [
+                "3) _____me a favor tonight \n.",
+                "1) Clean\nYou are requested to do me a favor tonight. \n2) be learnt"
+              ],
+              [
+                "Get out of my house.",
+                "3) Please do \n4)_____to get out of my house."
+              ],
+              [
+                "Kindly do not smoke in public place.",
+                "You 5)_____not to smoke in public place."
+              ]
+            ]
+          }
+        },
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.28,
+            "y1": 539.04
+          },
+          "accuracy": 95.28,
+          "whitespace": 87.5,
+          "columns": 2,
+          "rows": 8,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS   \nActive and Passive voice with Imperative Sentences\nThese are the sentences\nin which we express our\nfeeling and emotions\nlike command, order, advice, and\nrequest.\nRules :\n1. Lets + new object + be/Not be +past participle or 3rd form.\n2. For\nsentences containing, Request, advice and order, we will use you are Requested to, advised to and\nordered to.\nNote:\nAlways remove please and kind if they are given in the sentence.\nActive Voice\n1)____your room. \nLearn your lesson. \n3) _____me a favor tonight \n.\nGet out of my house. \nKindly do not smoke in public place. \n5) are requested",
+                "Passive Voice\nLet your room be cleaned. \nAns:\nLet your lesson 2) _____.\n1) Clean\nYou are requested to do me a favor tonight. \n2) be learnt\n3) Please do \n4)_____to get out of my house. \n4) You are ordered \nYou 5)_____not to smoke in public place."
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 18,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 100.0,
+          "whitespace": 77.78,
+          "columns": 3,
+          "rows": 3,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                ""
+              ],
+              [
+                "",
+                "Fill in the blanks with an active or passive verb form.\n1. The message ……………………………….. delivered.\n4. He ……………………………. to leave.\na)\nhas\na)\ntold\nb)\nhas been\nb) was told\nc)\nhad\nc)\nhas told\n2. The messenger …………………………….. the message.\n5. The culprit ……………………………\na)\nhas been delivered\nPlease select 2 correct answers\nb)\nhas delivered\na)\nhas caught\nc)\nis delivered\nb)\nhas been caught\nc)\nwas caught\n3. They ………………………….. the parcel in the morning.\na)\nsent\nb)\nhave sent\nc)\nhave been sent",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 19,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 1.44,
+            "y0": 0.96,
+            "x1": 959.04,
+            "y1": 539.04
+          },
+          "accuracy": 100.0,
+          "whitespace": 77.78,
+          "columns": 3,
+          "rows": 3,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                ""
+              ],
+              [
+                "",
+                "9. The kitten ……………………………. home yesterday.\n6. The suspect …………………………… to the crime.\na)\nhas brought\na)\nhas confessed\nb) was brought\nb) was confessed\nc)\nhas been brought\nc)\nhas been confessed\n10. I ……………………….. a cake for my daughter’s birthday.\n7. I …………………………….. the invite.\nPlease select 2 correct answers\na)\nhave been received\na)\nbaked\nb)\nhave received\nb) was baked\nc)\nhad received\nc)\nhave baked\n8. The invites ……………………………..\n11. I …………………………. her a necklace.\na)\nhave sent\na)\nbought\nb)\nhave been sent\nb) was bought\nc)\nhad sent\nc)\nhave been bought",
+                ""
+              ],
+              [
+                "",
+                "",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1343 @@
+{
+  "filename": "with_tables.pdf",
+  "total_pages": 20,
+  "parser": "camelot",
+  "flavor": "stream",
+  "pages": [
+    {
+      "page_number": 1,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 100.0,
+          "whitespace": 0.0,
+          "columns": 1,
+          "rows": 4,
+          "data": {
+            "headers": [
+              0
+            ],
+            "data": [
+              [
+                "Democratising quality global education"
+              ],
+              [
+                "Grammar:"
+              ],
+              [
+                "Active – Passive"
+              ],
+              [
+                "Voice"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 2,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 123.44,
+            "y0": 243.96,
+            "x1": 830.2,
+            "y1": 547.06
+          },
+          "accuracy": 100.0,
+          "whitespace": 0.0,
+          "columns": 1,
+          "rows": 6,
+          "data": {
+            "headers": [
+              0
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS"
+              ],
+              [
+                "What is Active Voice??????"
+              ],
+              [
+                "In active sentences, the subject is active or the subject performs the"
+              ],
+              [
+                "actions."
+              ],
+              [
+                "For example: The cow (Subject) is eating (Verb) grass (Object).-Active"
+              ],
+              [
+                "Voice"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 3,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 56.02,
+            "y0": 15.98,
+            "x1": 905.44,
+            "y1": 545.64
+          },
+          "accuracy": 100.0,
+          "whitespace": 0.0,
+          "columns": 1,
+          "rows": 17,
+          "data": {
+            "headers": [
+              0
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS"
+              ],
+              [
+                "When do I use passive voice?"
+              ],
+              [
+                "In some sentences, passive voice can be perfectly acceptable. You might use it in the following cases:"
+              ],
+              [
+                "1.The actor is unknown:"
+              ],
+              [
+                "Eg: The cave paintings of Ajanta & Ellora were made in the Upper Old Stone Age.\n[We don’t know who made"
+              ],
+              [
+                "them.]"
+              ],
+              [
+                "2.The actor is irrelevant:"
+              ],
+              [
+                "Eg: An experimental solar nuclear plant will be built in the Australian desert.\n[We are not interested in who is"
+              ],
+              [
+                "building it.]"
+              ],
+              [
+                "3. You are talking about a general truth:"
+              ],
+              [
+                "Eg: Rules are made to be broken. [By whomever, whenever.]"
+              ],
+              [
+                "4. You want to emphasize the person or thing acted on. For example, it may be your main topic:"
+              ],
+              [
+                "Eg:\nInsulin was first discovered in 1921 by researchers at the University of Toronto.\nIt is still the only treatment"
+              ],
+              [
+                "available for diabetes."
+              ],
+              [
+                "5. You are writing in a scientific genre that traditionally relies on passive voice. Passive voice is often preferred"
+              ],
+              [
+                "in\nlab\nreports\nand\nscientific\nresearch\npapers, most\nnotably\nin\nthe Materials\nand Methods\nsection:"
+              ],
+              [
+                "Eg: The sodium hydroxide was dissolved in water. This solution was then titrated with hydrochloric acid."
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 4,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 85.67,
+          "whitespace": 25.0,
+          "columns": 2,
+          "rows": 4,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                ""
+              ],
+              [
+                "Rules of transformation - Active voice to Passive voice:",
+                ""
+              ],
+              [
+                "Active Voice",
+                "Passive Voice"
+              ],
+              [
+                "I prepare for IELTS exam.",
+                "IELTS exam is prepared by me."
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 5,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 100.0,
+          "whitespace": 50.0,
+          "columns": 2,
+          "rows": 17,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "",
+                "GRAMMAR FOR IELTS"
+              ],
+              [
+                "",
+                "Rules of transformation - Active voice to Passive voice:"
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "•",
+                "Find subject, object and the main verb."
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "•",
+                "Convert the object into subject."
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "•",
+                "Use the suitable helping verb or auxiliary verb according to the tense."
+              ],
+              [
+                "",
+                "✓ If helping verb is given, use verb as it is. But note that the helping verb"
+              ],
+              [
+                "",
+                "used should be according to the object."
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "•",
+                "Convert the verb into past participle."
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "•",
+                "Use the preposition ‘by’(in some sentences the use of ‘by’ is not"
+              ],
+              [
+                "",
+                "required when the doer is not mentioned in the sentence)."
+              ],
+              [
+                "",
+                ""
+              ],
+              [
+                "•",
+                "Convert the subject into object."
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 6,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 100.0,
+          "whitespace": 0.0,
+          "columns": 1,
+          "rows": 2,
+          "data": {
+            "headers": [
+              0
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS"
+              ],
+              [
+                "Types of Pronouns - Introduction"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 7,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 100.0,
+          "whitespace": 0.0,
+          "columns": 1,
+          "rows": 1,
+          "data": {
+            "headers": [
+              0
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 8,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 100.0,
+          "whitespace": 0.0,
+          "columns": 1,
+          "rows": 1,
+          "data": {
+            "headers": [
+              0
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 9,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 91.25,
+          "whitespace": 16.67,
+          "columns": 2,
+          "rows": 12,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                ""
+              ],
+              [
+                "",
+                "Active And Passive Voice With Tenses"
+              ],
+              [
+                "",
+                "Simple Present Tense - Structure: is, am, are + Past Participle"
+              ],
+              [
+                "Active Voice",
+                "Passive Voice"
+              ],
+              [
+                "He lights the candle.",
+                "The candle is lighted by him."
+              ],
+              [
+                "He does not light the candle.",
+                "The candle is not lighted by him."
+              ],
+              [
+                "Do you eat chocolate?",
+                "Is chocolate eaten by you?"
+              ],
+              [
+                "Present Continuous Tense - Structure: is, am, are + being + Past Participle",
+                ""
+              ],
+              [
+                "Active Voice",
+                "Passive Voice"
+              ],
+              [
+                "I am driving a car.",
+                "A car is being driven by me."
+              ],
+              [
+                "I am not driving a car.",
+                "A car is not being driven by me."
+              ],
+              [
+                "Am I driving a car?",
+                "Is a car being driven by me?"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 10,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 130.62,
+            "y0": 65.2,
+            "x1": 967.77,
+            "y1": 278.14
+          },
+          "accuracy": 98.56,
+          "whitespace": 54.55,
+          "columns": 3,
+          "rows": 11,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "Has she stolen my book?",
+                "Has my book 2) ____by her?",
+                ""
+              ],
+              [
+                "",
+                "Simple Past Tense",
+                ""
+              ],
+              [
+                "Structure: was, were + Past Participle",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "Ans:"
+              ],
+              [
+                "",
+                "",
+                "1) has not been stolen"
+              ],
+              [
+                "Active Voice",
+                "Passive Voice",
+                ""
+              ],
+              [
+                "",
+                "",
+                "2) been stolen"
+              ],
+              [
+                "She finished the work.",
+                "The work was finished by her.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "3) was not finished"
+              ],
+              [
+                "",
+                "",
+                "4) Finished"
+              ],
+              [
+                "She didn’t finish the work.",
+                "The work 3)______by her.",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 11,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 69.78,
+            "y0": 108.08,
+            "x1": 969.69,
+            "y1": 342.71
+          },
+          "accuracy": 100.0,
+          "whitespace": 40.91,
+          "columns": 2,
+          "rows": 11,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "He was revising his books. \nHis books were being revised by him.",
+                ""
+              ],
+              [
+                "He was not revising his books.\nHis books 1)______by him.",
+                ""
+              ],
+              [
+                "Was he revising his books? \n2) _____ his books 3) _____by him?",
+                ""
+              ],
+              [
+                "",
+                "Ans:"
+              ],
+              [
+                "Past Perfect Tense",
+                "1) were not revised"
+              ],
+              [
+                "",
+                "2) Were"
+              ],
+              [
+                "Structure: had + been + Past Participle",
+                "3) Revised"
+              ],
+              [
+                "",
+                "4) had been completed"
+              ],
+              [
+                "Active Voice \nPassive Voice",
+                ""
+              ],
+              [
+                "",
+                "5) been completed"
+              ],
+              [
+                "I had completed the assignment. \nThe assignment 4)_____by me.",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 12,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 38.36,
+            "y0": 38.3,
+            "x1": 960.8,
+            "y1": 272.91
+          },
+          "accuracy": 97.07,
+          "whitespace": 50.0,
+          "columns": 3,
+          "rows": 12,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "Will my uncle pay my tuition fee?",
+                "Will my tuition fee 3) _____by my uncle?",
+                ""
+              ],
+              [
+                "",
+                "Future Perfect Tense",
+                ""
+              ],
+              [
+                "Structure: will/shall + have been + Past Participle",
+                "",
+                ""
+              ],
+              [
+                "",
+                "",
+                "Ans:"
+              ],
+              [
+                "",
+                "",
+                "1) will be paid"
+              ],
+              [
+                "Active Voice",
+                "Passive Voice",
+                ""
+              ],
+              [
+                "",
+                "",
+                "2) will not be paid"
+              ],
+              [
+                "We shall have done our home-work.",
+                "Our home -work shall have been done by us.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "3) be paid"
+              ],
+              [
+                "We shall not have done our home-work.",
+                "Our home -work 4) ____by us.",
+                "4) shall not have been done"
+              ],
+              [
+                "",
+                "",
+                "5) have been done"
+              ],
+              [
+                "Shall we have done our home work?",
+                "Shall our home work 5) ____by us?",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 13,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 83.95,
+          "whitespace": 25.0,
+          "columns": 2,
+          "rows": 8,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "",
+                "GRAMMAR FOR IELTS"
+              ],
+              [
+                "",
+                "Important Note:"
+              ],
+              [
+                "In the following, tenses cannot be changed into passive form:",
+                ""
+              ],
+              [
+                "•",
+                "Present perfect continuous tense"
+              ],
+              [
+                "•",
+                "Past perfect continuous tense"
+              ],
+              [
+                "•",
+                "Future perfect continuous tense"
+              ],
+              [
+                "•",
+                "Future perfect tense"
+              ],
+              [
+                "we use the same sentence in passive voice.",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 14,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 87.96,
+          "whitespace": 52.38,
+          "columns": 3,
+          "rows": 14,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                "",
+                ""
+              ],
+              [
+                "Active And Passive Voice With Modal Auxiliary Verbs",
+                "",
+                ""
+              ],
+              [
+                "Active Voice",
+                "Passive Voice",
+                ""
+              ],
+              [
+                "",
+                "Can/Could + be + Past Participle",
+                ""
+              ],
+              [
+                "I can solve these sums.",
+                "These sums can be solved by me.",
+                ""
+              ],
+              [
+                "",
+                "Has to/ Have to be + Past Participle",
+                ""
+              ],
+              [
+                "He has to complete his assignment.",
+                "His assignment 1)____by him.",
+                ""
+              ],
+              [
+                "",
+                "Must + be + Past Participle",
+                ""
+              ],
+              [
+                "You must learn this book.",
+                "This book 2) ____by you.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "Ans:"
+              ],
+              [
+                "",
+                "May+ be + Past Participle",
+                ""
+              ],
+              [
+                "",
+                "",
+                "1) has to be completed"
+              ],
+              [
+                "I may buy the book.",
+                "The book 3)____by me.",
+                "2) must be learnt"
+              ],
+              [
+                "",
+                "",
+                "3) may be bought"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 15,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 0,
+            "y0": 0,
+            "x1": 960.0,
+            "y1": 540.0
+          },
+          "accuracy": 89.65,
+          "whitespace": 35.0,
+          "columns": 2,
+          "rows": 10,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "GRAMMAR FOR IELTS",
+                ""
+              ],
+              [
+                "Active And Passive Voice With Modal Auxiliary Verbs",
+                ""
+              ],
+              [
+                "Active Voice",
+                "Passive Voice"
+              ],
+              [
+                "",
+                "Might + be + Past Participle"
+              ],
+              [
+                "They 1)_____chess.",
+                "Chess might be played by them."
+              ],
+              [
+                "",
+                "Should + be + Past Participle"
+              ],
+              [
+                "Students should learn all lessons.",
+                "All\nlessons 2) ____by students."
+              ],
+              [
+                "",
+                "Ans:"
+              ],
+              [
+                "",
+                "1) might play"
+              ],
+              [
+                "",
+                "2) should be learnt"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 16,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 75.78,
+            "y0": 13.46,
+            "x1": 946.24,
+            "y1": 267.96
+          },
+          "accuracy": 98.52,
+          "whitespace": 51.28,
+          "columns": 3,
+          "rows": 13,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "Note:",
+                "",
+                ""
+              ],
+              [
+                "Always remove please and kind if they are given in the sentence.",
+                "",
+                ""
+              ],
+              [
+                "Active Voice",
+                "Passive Voice",
+                ""
+              ],
+              [
+                "Shut the door.",
+                "Let the door 1)____.",
+                ""
+              ],
+              [
+                "Post the letter at once.",
+                "Post the letter at once.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "Ans:"
+              ],
+              [
+                "Always speak the truth.",
+                "Let the truth always 2) ____.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "1) be shut"
+              ],
+              [
+                "3)_____the cow.",
+                "Let the cow not be starved.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "2) be spoken"
+              ],
+              [
+                "",
+                "",
+                "3) Do not starve"
+              ],
+              [
+                "Let him help his brother.",
+                "Let his brother 4)____by him.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "4) be helped"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 17,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 73.59,
+            "y0": 16.82,
+            "x1": 975.81,
+            "y1": 267.75
+          },
+          "accuracy": 98.75,
+          "whitespace": 48.72,
+          "columns": 3,
+          "rows": 13,
+          "data": {
+            "headers": [
+              0,
+              1,
+              2
+            ],
+            "data": [
+              [
+                "Note:",
+                "",
+                ""
+              ],
+              [
+                "Always remove please and kind if they are given in the sentence.",
+                "",
+                ""
+              ],
+              [
+                "Active Voice",
+                "Passive Voice",
+                ""
+              ],
+              [
+                "1)____your room.",
+                "Let your room be cleaned.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "Ans:"
+              ],
+              [
+                "Learn your lesson.",
+                "Let your lesson 2) _____.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "1) Clean"
+              ],
+              [
+                "3) _____me a favor tonight \n.",
+                "You are requested to do me a favor tonight.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "2) be learnt"
+              ],
+              [
+                "Get out of my house.",
+                "4)_____to get out of my house.",
+                "3) Please do"
+              ],
+              [
+                "",
+                "",
+                "4) You are ordered"
+              ],
+              [
+                "Kindly do not smoke in public place.",
+                "You 5)_____not to smoke in public place.",
+                ""
+              ],
+              [
+                "",
+                "",
+                "5) are requested"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 18,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 93.22,
+            "y0": 73.07,
+            "x1": 777.79,
+            "y1": 497.91
+          },
+          "accuracy": 100.0,
+          "whitespace": 21.43,
+          "columns": 2,
+          "rows": 14,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "Fill in the blanks with an active or passive verb form.",
+                ""
+              ],
+              [
+                "1. The message ……………………………….. delivered.",
+                "4. He ……………………………. to leave."
+              ],
+              [
+                "a)\nhas",
+                "a)\ntold"
+              ],
+              [
+                "b)\nhas been",
+                "b) was told"
+              ],
+              [
+                "c)\nhad",
+                "c)\nhas told"
+              ],
+              [
+                "2. The messenger …………………………….. the message.",
+                "5. The culprit ……………………………"
+              ],
+              [
+                "a)\nhas been delivered",
+                "Please select 2 correct answers"
+              ],
+              [
+                "b)\nhas delivered",
+                "a)\nhas caught"
+              ],
+              [
+                "c)\nis delivered",
+                "b)\nhas been caught"
+              ],
+              [
+                "",
+                "c)\nwas caught"
+              ],
+              [
+                "3. They ………………………….. the parcel in the morning.",
+                ""
+              ],
+              [
+                "a)\nsent",
+                ""
+              ],
+              [
+                "b)\nhave sent",
+                ""
+              ],
+              [
+                "c)\nhave been sent",
+                ""
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 19,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 76.52,
+            "y0": 52.81,
+            "x1": 880.44,
+            "y1": 475.12
+          },
+          "accuracy": 100.0,
+          "whitespace": 10.71,
+          "columns": 2,
+          "rows": 14,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "6. The suspect …………………………… to the crime.",
+                "9. The kitten ……………………………. home yesterday."
+              ],
+              [
+                "a)\nhas confessed",
+                "a)\nhas brought"
+              ],
+              [
+                "b) was confessed",
+                "b) was brought"
+              ],
+              [
+                "c)\nhas been confessed",
+                "c)\nhas been brought"
+              ],
+              [
+                "7. I …………………………….. the invite.",
+                "10. I ……………………….. a cake for my daughter’s birthday."
+              ],
+              [
+                "a)\nhave been received",
+                "Please select 2 correct answers"
+              ],
+              [
+                "b)\nhave received",
+                "a)\nbaked"
+              ],
+              [
+                "c)\nhad received",
+                "b) was baked"
+              ],
+              [
+                "",
+                "c)\nhave baked"
+              ],
+              [
+                "8. The invites ……………………………..",
+                ""
+              ],
+              [
+                "a)\nhave sent",
+                "11. I …………………………. her a necklace."
+              ],
+              [
+                "b)\nhave been sent",
+                "a)\nbought"
+              ],
+              [
+                "c)\nhad sent",
+                "b) was bought"
+              ],
+              [
+                "",
+                "c)\nhave been bought"
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "page_number": 20,
+      "tables": [
+        {
+          "table_number": 1,
+          "bbox": {
+            "x0": 96.01,
+            "y0": 130.87,
+            "x1": 554.17,
+            "y1": 489.5
+          },
+          "accuracy": 97.81,
+          "whitespace": 4.17,
+          "columns": 2,
+          "rows": 12,
+          "data": {
+            "headers": [
+              0,
+              1
+            ],
+            "data": [
+              [
+                "Answer:",
+                ""
+              ],
+              [
+                "1.",
+                "The message has been delivered."
+              ],
+              [
+                "2.",
+                "The messenger has delivered the message."
+              ],
+              [
+                "3.",
+                "They sent the parcel in the morning."
+              ],
+              [
+                "4.",
+                "He was told to leave."
+              ],
+              [
+                "5.",
+                "The culprit has been caught/was caught."
+              ],
+              [
+                "6.",
+                "The suspect has confessed to the crime."
+              ],
+              [
+                "7.",
+                "I have received the invite."
+              ],
+              [
+                "8.",
+                "The invites have been sent."
+              ],
+              [
+                "9.",
+                "The kitten was brought home yesterday."
+              ],
+              [
+                "10.",
+                "I baked / have baked a cake for my daughter’s birthday."
+              ],
+              [
+                "11.",
+                "I bought her a necklace."
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

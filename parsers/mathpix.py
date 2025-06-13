@@ -1,3 +1,5 @@
+import sys
+print("PYTHONPATH:", sys.path)
 import requests
 import time
 import os
