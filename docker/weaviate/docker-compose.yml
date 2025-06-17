@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   weaviate:
-    image: semitechnologies/weaviate:latest
+    image: semitechnologies/weaviate:1.24.10
     ports:
       - "8080:8080"
     environment:
@@ -10,5 +10,7 @@ services:
       - PERSISTENCE_DATA_PATH=/var/lib/weaviate
       - DEFAULT_VECTORIZER_MODULE=none
       - ENABLE_MODULES=none
+      - DISK_USE_READONLY_PERCENTAGE=90
+      - CLUSTER_ENABLED=false
     volumes:
       - ./data:/var/lib/weaviate 

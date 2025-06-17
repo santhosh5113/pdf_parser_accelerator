@@ -1,0 +1,11 @@
+name: docling_env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - docling>=2.32.0
+      - docling-core>=2.34.0
+      - docling-ibm-models>=3.4.0

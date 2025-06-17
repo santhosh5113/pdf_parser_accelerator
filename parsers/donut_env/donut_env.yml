@@ -1,0 +1,14 @@
+name: donut_env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - poppler  # for pdf2image
+  - pip:
+      - donut-python
+      - torch
+      - transformers
+      - pdf2image
+      - pillow

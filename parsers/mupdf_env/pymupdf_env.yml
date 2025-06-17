@@ -1,0 +1,11 @@
+name: pymupdf_env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - PyMuPDF
+      - Pillow  # for image extraction
+      - fonttools  # for font subsetting (optional)

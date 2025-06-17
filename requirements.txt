@@ -9,57 +9,7 @@ pymilvus==2.3.5
 chromadb>=0.4.22
 qdrant-client>=1.7.0
 weaviate-client>=3.25.3
-pinecone-client>=2.3.0
-
-# PDF Parsers
-## PDFMiner
-pdfminer.six>=20231228
-
-## PaddleOCR
-paddleocr>=2.7.0
-shapely>=2.0.0
-pyclipper>=1.3.0
-scikit-image>=0.19.0
-imgaug>=0.4.0
-
-## Nougat
-nougat-ocr>=0.1.17
-pytorch-lightning>=2.0.0
-timm==0.5.4
-albumentations>=1.0.0
-pypdf>=3.1.0
-
-## DocTR
-python-doctr>=0.7.0
-weasyprint>=55.0
-defusedxml>=0.7.0
-mplcursors>=0.3
-unidecode>=1.0.0
-
-## Donut
-donut-python>=1.0.9
-transformers>=4.34.0
-datasets>=2.14.0
-
-## LLaMa
-llama-parse>=0.3.3
-llama-index>=0.8.0
-
-## LayoutLM
-layoutlmft>=0.1.0
-detectron2>=0.6
-pytesseract>=0.3.0
-
-## MuPDF
-PyMuPDF>=1.20.0
-
-## Docling
-docling>=2.32.0
-docling-core>=2.34.0
-docling-ibm-models>=3.4.0
-
-## Mathpix
-mathpix-python>=1.0.0
+pinecone>=3.0.0
 
 # API and utilities
 fastapi>=0.95.2

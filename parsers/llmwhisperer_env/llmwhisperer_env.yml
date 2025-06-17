@@ -1,0 +1,15 @@
+name: llmwhisperer_env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.12  # llmwhisperer-client requires Python >=3.12
+  - pip
+  - pip:
+      - llmwhisperer-client
+# If you want local Whisper support, add pywhispercpp as well
+# - pywhispercpp
+# Optional: For audio/video file support, install ffmpeg on your system (not via pip)
+# On Mac: brew install ffmpeg
+# On Ubuntu: sudo apt-get install ffmpeg
+# Note: llmwhisperer-client officially requires Python >=3.12. Some features may not work on 3.10. 

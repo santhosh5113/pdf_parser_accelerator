@@ -11,6 +11,8 @@ from nougat import NougatModel
 from nougat.postprocessing import markdown_compatible
 from nougat.dataset.rasterize import rasterize_paper
 import io
+import pytesseract
+import os
 
 # Configure logging
 logging.basicConfig(
@@ -60,133 +62,81 @@ class NougatParser:
                 return True
         return False
 
-    def process_page(self, image: Image.Image, page_idx: int, max_retries: int = 5) -> Tuple[str, bool]:
+    def process_page(self, image: Image.Image, page_idx: int) -> Tuple[str, bool, bool]:
         """
-        Process a single page with retries and error handling.
-        
-        Args:
-            image (Image.Image): PIL Image of the page
-            page_idx (int): Page number (1-based)
-            max_retries (int): Maximum number of retry attempts
-            
-        Returns:
-            Tuple[str, bool]: (Extracted text, Has equations)
-        """
-        retry_count = 0
-        last_error = None
-        best_text = ""
-        has_equations = False
-        
-        while retry_count < max_retries:
-            try:
-                # Generate text from the image using default parameters
-                output = self.model.inference(image=image)
-                
-                # Clean and extract text from output
-                if isinstance(output, dict):
-                    if 'predictions' in output and isinstance(output['predictions'], list):
-                        text = ' '.join(pred for pred in output['predictions'] if pred)
-                    elif 'text' in output:
-                        text = output['text']
-                    else:
-                        text = str(output)
-                else:
-                    text = str(output)
-                
-                # Post-process the output
-                text = markdown_compatible(text)
-                
-                # Check for equations
-                current_has_equations = self.has_equations(text)
-                
-                # Keep the best result (prioritize text with equations)
-                if not best_text or (current_has_equations and not has_equations) or len(text) > len(best_text):
-                    best_text = text
-                    has_equations = current_has_equations
-                
-                # If we have equations and good content, we can stop
-                if has_equations and len(best_text.strip()) > 100:
-                    break
-                
-                # If text is empty, always retry
-                if not text.strip():
-                    raise ValueError("Empty text output")
-                
-                # If no equations found but we expect them (based on previous success),
-                # and we haven't maxed out retries, try again
-                if not current_has_equations and retry_count < max_retries - 1:
-                    retry_count += 1
-                    time.sleep(2)  # Longer wait between retries
-                    continue
-                
-                return best_text.strip(), has_equations
-                
-            except Exception as e:
-                last_error = e
-                retry_count += 1
-                logger.warning(f"Retry {retry_count}/{max_retries} for page {page_idx} due to: {str(e)}")
-                time.sleep(2)  # Longer wait between retries
-        
-        if not best_text.strip():
-            logger.error(f"Failed to process page {page_idx} after {max_retries} attempts: {str(last_error)}")
-            return "", False
-            
-        return best_text.strip(), has_equations
-
-    def parse_pdf(self, pdf_path: str, output_path: str) -> Dict[str, Any]:
-        """
-        Parse a PDF file and extract its content including equations.
-        
-        Args:
-            pdf_path (str): Path to the input PDF file
-            output_path (str): Path where to save the output JSON
-            
-        Returns:
-            Dict[str, Any]: Dictionary containing the parsed content
+        Process a single page with error handling and Tesseract fallback.
+        Returns (Extracted text, Has equations, Used Tesseract fallback)
         """
         try:
-            # Load and process the PDF
+            # Generate text from the image using Nougat
+            output = self.model.inference(image=image)
+            # Clean and extract text from output
+            if isinstance(output, dict):
+                if 'predictions' in output and isinstance(output['predictions'], list):
+                    text = ' '.join(pred for pred in output['predictions'] if pred)
+                elif 'text' in output:
+                    text = output['text']
+                else:
+                    text = str(output)
+            else:
+                text = str(output)
+            # Post-process the output
+            text = markdown_compatible(text)
+            # Check for equations
+            has_equations = self.has_equations(text)
+            if not text.strip():
+                raise ValueError("Empty text output from Nougat")
+            return text.strip(), has_equations, False
+        except Exception as e:
+            logger.warning(f"Nougat failed for page {page_idx} ({e}), using Tesseract fallback.")
+            # Fallback to Tesseract OCR
+            try:
+                text = pytesseract.image_to_string(image)
+                has_equations = self.has_equations(text)
+                return text.strip(), has_equations, True
+            except Exception as e2:
+                logger.error(f"Tesseract also failed for page {page_idx}: {e2}")
+                return "", False, True
+
+    def parse_pdf(self, pdf_path: str, output_path: str) -> Dict[str, Any]:
+        try:
             logger.info(f"Processing PDF: {pdf_path}")
-            
-            # Convert PDF to images
+            logger.info(f"Calling rasterize_paper on: {pdf_path}")
             images = rasterize_paper(pdf_path)
+            logger.info(f"rasterize_paper returned {len(images)} images")
             if not images:
                 raise ValueError("No images found in PDF")
-            
-            # Process each page
             pages = []
             failed_pages = []
             total_equations = 0
-            
+            full_texts = []
+            # Prepare directory for failed images
+            failed_img_dir = os.path.join(os.path.dirname(output_path), 'failed_pages_images')
+            os.makedirs(failed_img_dir, exist_ok=True)
             for page_idx, image_bytes in enumerate(images, 1):
                 logger.info(f"Processing page {page_idx}")
-                
                 try:
-                    # Convert BytesIO to PIL Image
                     if isinstance(image_bytes, io.BytesIO):
                         image_bytes.seek(0)
                         image = Image.open(image_bytes).convert('RGB')
                     else:
                         image = image_bytes
-                    
-                    # Process the page with retries
-                    text, has_equations = self.process_page(image, page_idx)
-                    
-                    # Update equation count
+                    text, has_equations, used_tesseract = self.process_page(image, page_idx)
                     if has_equations:
                         total_equations += 1
-                    
-                    # Store page content
                     pages.append({
                         "page_number": page_idx,
                         "content": text,
                         "has_equations": has_equations,
-                        "status": "success" if text else "failed"
+                        "status": "success" if text else "failed",
+                        "used_tesseract": used_tesseract
                     })
-                    
+                    full_texts.append(text)
                     if not text:
                         failed_pages.append(page_idx)
-                    
+                        # Save failed image for debugging
+                        fail_img_path = os.path.join(failed_img_dir, f"page_{page_idx}.png")
+                        image.save(fail_img_path)
                 except Exception as e:
                     logger.error(f"Error processing page {page_idx}: {str(e)}")
                     pages.append({
@@ -194,11 +144,16 @@ class NougatParser:
                         "content": "",
                         "has_equations": False,
                         "status": "error",
-                        "error": str(e)
+                        "error": str(e),
+                        "used_tesseract": False
                     })
                     failed_pages.append(page_idx)
-            
-            # Prepare output
+                    # Save failed image for debugging
+                    try:
+                        fail_img_path = os.path.join(failed_img_dir, f"page_{page_idx}.png")
+                        image.save(fail_img_path)
+                    except Exception:
+                        pass
             result = {
                 "metadata": {
                     "source_file": pdf_path,
@@ -210,23 +165,17 @@ class NougatParser:
                     "processing_date": logging.Formatter().converter()
                 },
                 "pages": pages,
-                # Add full text for easy access, excluding failed pages
-                "full_text": "\n\n".join(page["content"] for page in pages if page["content"])
+                # Add full text for easy access, including all pages
+                "full_text": "\n\n".join(full_texts)
             }
-            
-            # Save to JSON
             logger.info(f"Saving output to {output_path}")
             with open(output_path, 'w', encoding='utf-8') as f:
                 json.dump(result, f, ensure_ascii=False, indent=2)
-            
-            # Log summary
             logger.info(f"Processing complete: {result['metadata']['successful_pages']}/{result['metadata']['num_pages']} pages successful")
             logger.info(f"Found equations on {total_equations} pages")
             if failed_pages:
                 logger.warning(f"Failed pages: {failed_pages}")
-            
             return result
-            
         except Exception as e:
             logger.error(f"Error processing PDF: {str(e)}")
             raise

@@ -46,15 +46,17 @@ def main():
             structured_output=True  # Enable JSON output
         )
 
-        # Parse the PDF
-        result = parser.parse_file(input_pdf)
+        # Parse the PDF using the recommended method
+        extra_info = {"file_name": input_pdf}
+        with open(input_pdf, "rb") as f:
+            result = parser.load_data(f, extra_info=extra_info)
 
         # Extract structured data from each page
         output_data = []
         for page in result:
             page_data = {
-                "page_number": page.pageNumber,
-                "content": page.structuredData if hasattr(page, "structuredData") else page.text,
+                "page_number": getattr(page, "pageNumber", None),
+                "content": getattr(page, "structuredData", None) if hasattr(page, "structuredData") else getattr(page, "text", None),
             }
             output_data.append(page_data)
 
