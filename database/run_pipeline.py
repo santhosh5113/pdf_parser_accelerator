@@ -19,6 +19,7 @@ from config.vector_store_config import (
 )
 from .text_chunker import process_pdf_json, chunk_text, extract_text_from_json
 from .vector_store_factory import VectorStoreFactory
+from analyzer.analyze_pdf import analyze_pdf
 try:
     import fitz  # PyMuPDF
 except ImportError:
@@ -48,42 +49,6 @@ def run_parser(env_name, script, input_pdf, output_json):
         "conda", "run", "-n", env_name, "python",
         f"parsers/{script}", input_pdf, output_json
     ])
-
-def analyze_pdf(pdf_path: str) -> str:
-    """Analyze PDF and determine its category."""
-    try:
-        doc = fitz.open(pdf_path)
-        
-        # Check first page
-        page = doc[0]
-        
-        # Get text
-        text = page.get_text()
-        
-        # Get images
-        images = page.get_images()
-        
-        # Check for tables (simplified check)
-        has_tables = False
-        try:
-            tables = page.find_tables()
-            has_tables = tables is not None and tables.tables
-        except:
-            pass
-        
-        doc.close()
-        
-        # Decision logic
-        if not text.strip():  # No text found
-            return "scanned_pdf"
-        elif has_tables:
-            return "native_table"
-        else:
-            return "native_text"
-            
-    except Exception as e:
-        print(f"Error analyzing PDF: {e}")
-        return "unknown"
 
 def store_pdf_chunks(json_path: str, source_id: str, vector_store_type: str) -> bool:
     """Store PDF chunks in vector database.
