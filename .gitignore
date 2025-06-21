@@ -51,3 +51,38 @@ processed/
 
 # Docker
 .docker/
+
+# Environments
+**/camelot_env/
+**/docling_env/
+**/donut_env/
+**/layoutlm_env/
+**/llama_parse_env/
+**/llmwhisperer_env/
+**/markitdown_env/
+**/mathpix_env/
+**/mupdf_env/
+**/nougat_env/
+**/paddleocr_env/
+**/pdfminer_env/
+**/vision_env/
+
+# Local data, models, and indexes
+chroma_db/
+facebook/
+faiss_index/
+nougat/
+
+# Docker data volumes
+docker/qdrant/qdrant_storage/
+docker/weaviate/data/
+
+# Generated output
+shared/output_json/
+
+# OS-specific
+.DS_Store
+
+# Python cache
+__pycache__/
+*.pyc

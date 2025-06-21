@@ -75,8 +75,6 @@ def analyze_pdf(pdf_path: str) -> str:
         # Routing logic
         if has_tables or table_like:
             return "native_table"
-        elif not has_text and has_images and ("table" in filename):
-            return "native_table"
         elif all_pages_no_text and has_images:
             return "scanned_pdf"
         elif has_text:

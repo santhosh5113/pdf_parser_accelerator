@@ -10,32 +10,24 @@ import re
 # Initialize the HuggingFace tokenizer
 tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-MiniLM-L6-v2")
 
-def chunk_text(text: str) -> List[str]:
-    """Chunk text using tokenizer with configured settings.
-    
+# Add import for LangChain's RecursiveCharacterTextSplitter
+try:
+    from langchain.text_splitter import RecursiveCharacterTextSplitter
+    _HAS_LANGCHAIN = True
+except ImportError:
+    _HAS_LANGCHAIN = False
+
+def chunk_text(text: str, max_tokens: int = None, overlap: int = None) -> list:
+    """
+    Chunk text using LangChain's RecursiveCharacterTextSplitter by default.
     Args:
-        text: Text to chunk
-    
+        text: The text to chunk.
+        max_tokens: Max tokens per chunk (defaults to CHUNK_CONFIG["max_tokens"])
+        overlap: Overlap tokens between chunks (defaults to CHUNK_CONFIG["overlap"])
     Returns:
         List of text chunks
     """
-    # Skip empty or whitespace-only text
-    if not text.strip():
-        return []
-        
-    tokens = tokenizer.encode(text, add_special_tokens=False)
-    chunks = []
-    start = 0
-    
-    while start < len(tokens):
-        end = min(start + CHUNK_CONFIG["max_tokens"], len(tokens))
-        chunk = tokenizer.decode(tokens[start:end])
-        # Skip empty chunks
-        if chunk.strip():
-            chunks.append(chunk)
-        start += CHUNK_CONFIG["max_tokens"] - CHUNK_CONFIG["overlap"]
-    
-    return chunks
+    return recursive_chunk_text(text, max_tokens, overlap)
 
 def resolve_references(data: Dict[str, Any], ref_path: str) -> Any:
     """Resolve JSON references in Docling format.
@@ -359,4 +351,47 @@ def flatten_hybrid_chunks(hybrid_chunks: List[Dict[str, str]]) -> List[str]:
     Returns:
         List of text chunks (tables and text as plain text)
     """
-    return [chunk["content"] for chunk in hybrid_chunks] 
+    return [chunk["content"] for chunk in hybrid_chunks]
+
+def recursive_chunk_text(text: str, max_tokens: int = None, overlap: int = None) -> list:
+    """
+    Chunk text using LangChain's RecursiveCharacterTextSplitter.
+    Args:
+        text: The text to chunk.
+        max_tokens: Max tokens per chunk (defaults to CHUNK_CONFIG["max_tokens"])
+        overlap: Overlap tokens between chunks (defaults to CHUNK_CONFIG["overlap"])
+    Returns:
+        List of text chunks
+    """
+    if not _HAS_LANGCHAIN:
+        raise ImportError("LangChain is not installed. Please install langchain to use recursive chunking.")
+    if max_tokens is None:
+        max_tokens = CHUNK_CONFIG["max_tokens"]
+    if overlap is None:
+        overlap = CHUNK_CONFIG["overlap"]
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=max_tokens,
+        chunk_overlap=overlap,
+        separators=["\n\n", "\n", ".", "!", "?", " ", ""]
+    )
+    return splitter.split_text(text)
+
+def chunk_text_with_strategy(text: str, strategy: str = "tokenizer", max_tokens: int = None, overlap: int = None) -> list:
+    """
+    Chunk text using the selected strategy.
+    Args:
+        text: The text to chunk.
+        strategy: 'tokenizer', 'hybrid', or 'recursive'
+        max_tokens: Max tokens per chunk
+        overlap: Overlap tokens between chunks
+    Returns:
+        List of text chunks
+    """
+    if strategy == "tokenizer":
+        return chunk_text(text) if max_tokens is None and overlap is None else chunk_text(text, max_tokens, overlap)
+    elif strategy == "hybrid":
+        return hybrid_chunk_text(text, max_tokens, overlap)
+    elif strategy == "recursive":
+        return recursive_chunk_text(text, max_tokens, overlap)
+    else:
+        raise ValueError(f"Unknown chunking strategy: {strategy}") 
