@@ -1,12 +1,11 @@
 name: paddleocr_env
 channels:
-  - defaults
   - conda-forge
+  - defaults
 dependencies:
   - python=3.10
   - pip
   - pip:
       - paddleocr
+      - pymupdf
       - paddlepaddle
-      - PyMuPDF
-      - Pillow

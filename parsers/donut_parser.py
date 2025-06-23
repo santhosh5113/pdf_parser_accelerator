@@ -14,6 +14,7 @@ class DonutParser:
     """Parser using the Donut (Document Understanding Transformer) model."""
     
     def __init__(self, model_name: str = "naver-clova-ix/donut-base-finetuned-cord-v2"):
+    
         """
         Initialize the Donut parser.
         

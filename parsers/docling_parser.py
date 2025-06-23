@@ -1,4 +1,4 @@
-# parsers/docling_parser.py
+conda deactivate# parsers/docling_parser.py
 
 import sys
 import json

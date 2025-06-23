@@ -22,24 +22,27 @@
   {
     "page": 2,
     "content": {
-      "menu": {
-        "nm": "Date of Birth:",
-        "num": "05-NOV-2003",
-        "unitprice": [
-          {
+      "menu": [
+        {
+          "nm": "Date of Birth:",
+          "num": "05-NOV-2003",
+          "unitprice": {
             "nm": "O+VE",
             "num": "Address & Phone no(s):"
           },
-          {
-            "nm": "KATTUPAKKAM CHENNAI - 600056.",
-            "num": "1, TMIS ID"
-          }
-        ],
-        "cnt": {
-          "unitprice": "valid till May 2025"
+          "cnt": {
+            "num": "9176471277"
+          },
+          "discountprice": "authorities.",
+          "price": "and"
         },
-        "price": "5"
-      }
+        {
+          "nm": "2.Student should always wear \"identity Card within the",
+          "unitprice": "valid till May 2025",
+          "cnt": "5",
+          "price": "5"
+        }
+      ]
     }
   }
 ]
