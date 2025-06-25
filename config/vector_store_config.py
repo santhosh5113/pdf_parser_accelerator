@@ -27,7 +27,9 @@ QDRANT_CONFIG: Dict[str, Any] = {
 WEAVIATE_CONFIG: Dict[str, Any] = {
     **COMMON_CONFIG,
     "type": "weaviate",
-    "url": "http://localhost:8080"  # Default Weaviate server URL
+    "host": "localhost",  # Default Weaviate server host
+    "port": 8080,          # Default Weaviate server port
+    "secure": False        # Use HTTP by default
 }
 
 # Milvus configuration

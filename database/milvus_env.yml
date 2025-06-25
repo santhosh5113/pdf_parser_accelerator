@@ -1,0 +1,15 @@
+name: milvus_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - pymilvus==2.3.5
+      - grpcio==1.58.0
+      - protobuf>=3.20.0,<6.0
+      - sentence-transformers>=2.5.0
+      - numpy>=1.25.0
+      - pymupdf>=1.22.0
+      - marshmallow<4.0.0

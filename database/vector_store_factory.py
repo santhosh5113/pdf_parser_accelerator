@@ -2,18 +2,12 @@
 
 from typing import Dict, Any
 from .vector_store_base import VectorStoreBase
-from .vector_store_qdrant import QdrantVectorStore
-from .vector_store_chroma import ChromaVectorStore
-from .vector_store_weaviate import WeaviateVectorStore
-from .vector_store_milvus import MilvusVectorStore
-from .vector_store_faiss import FaissVectorStore
-from .vector_store_pinecone import PineconeVectorStore
 
 class VectorStoreFactory:
     """Factory for creating vector store instances."""
     
     @staticmethod
-    def create(config: Dict[str, Any]) -> VectorStoreBase:
+    def create(config: Dict[str, Any]) -> 'VectorStoreBase':
         """Create a vector store instance based on configuration.
         
         Args:
@@ -30,20 +24,26 @@ class VectorStoreFactory:
         store_type = config.get("type", "").lower()
         
         if store_type == "chroma":
+            from .vector_store_chroma import ChromaVectorStore
             return ChromaVectorStore(**config)
             
         elif store_type == "qdrant":
+            from .vector_store_qdrant import QdrantVectorStore
             return QdrantVectorStore(**config)
             
         elif store_type == "weaviate":
+            from .vector_store_weaviate import WeaviateVectorStore
             return WeaviateVectorStore(**config)
             
         elif store_type == "milvus":
+            from .vector_store_milvus import MilvusVectorStore
             return MilvusVectorStore(**config)
             
         elif store_type == "faiss":
+            from .vector_store_faiss import FaissVectorStore
             return FaissVectorStore(**config)
         elif store_type == "pinecone":
+            from .vector_store_pinecone import PineconeVectorStore
             return PineconeVectorStore(**config)
             
         else:
