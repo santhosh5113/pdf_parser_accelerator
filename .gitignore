@@ -86,3 +86,7 @@ shared/output_json/
 # Python cache
 __pycache__/
 *.pyc
+
+facebook/nougat-base/pytorch_model.bin
+
+temp_images/
