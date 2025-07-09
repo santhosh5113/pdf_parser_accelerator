@@ -50,7 +50,8 @@ def poll_for_status(client, whisper_hash: str) -> None:
             if current_status != last_status:
                 logging.info(f"Job status: {current_status}")
                 last_status = current_status
-            if current_status == "completed":
+            # Accept both 'processed' and 'completed' as successful statuses
+            if current_status in ["processed", "completed"]:
                 logging.info(f"Job completed after {attempt+1} polling attempts")
                 return
             elif current_status == "failed":
@@ -79,21 +80,13 @@ def main(input_pdf: str, output_json: str) -> None:
     client = LLMWhispererClientV2(api_key=API_KEY)
     try:
         whisper_hash = submit_pdf(client, input_pdf)
-        while True:
-            status = client.whisper_status(whisper_hash=whisper_hash)
-            if status["status"] == "processed":
-                final_result = client.whisper_retrieve(whisper_hash=whisper_hash)
-                with open(output_json, "w", encoding="utf-8") as f:
-                    json.dump(final_result, f, indent=2, ensure_ascii=False)
-                elapsed_time = time.time() - start_time
-                logging.info(f"Job completed successfully in {elapsed_time:.2f} seconds")
-                logging.info(f"Results saved to {output_json}")
-                break
-            elif status["status"] in ["unknown", "failed"]:
-                error_msg = status.get("error_message", "Unknown or failed status")
-                logging.error(f"Processing failed or unknown status. Error: {error_msg}")
-                sys.exit(1)
-            time.sleep(5)
+        poll_for_status(client, whisper_hash)
+        final_result = retrieve_result(client, whisper_hash)
+        with open(output_json, "w", encoding="utf-8") as f:
+            json.dump(final_result, f, indent=2, ensure_ascii=False)
+        elapsed_time = time.time() - start_time
+        logging.info(f"Job completed successfully in {elapsed_time:.2f} seconds")
+        logging.info(f"Results saved to {output_json}")
     except FileNotFoundError as e:
         logging.error(f"Error: {e}")
         sys.exit(1)
@@ -103,7 +96,7 @@ def main(input_pdf: str, output_json: str) -> None:
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python whisper_llm_parser.py <input_pdf> <output_json>")
+        print("Usage: python llmwhisperer_parser.py <input_pdf> <output_json>")
         sys.exit(1)
     input_pdf = sys.argv[1]
     output_json = sys.argv[2]

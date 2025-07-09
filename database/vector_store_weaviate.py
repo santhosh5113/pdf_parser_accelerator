@@ -6,11 +6,11 @@ from typing import List, Dict, Any, Optional
 
 import weaviate
 import weaviate.classes as wvc
-from sentence_transformers import SentenceTransformer
 from weaviate.classes.config import Property, DataType, Configure
 from weaviate.classes.data import DataObject
 
 from .vector_store_base import VectorStoreBase
+from database.bge_embedder import BGEEmbedder
 
 class WeaviateVectorStore(VectorStoreBase):
     """Vector store implementation using Weaviate."""
@@ -19,10 +19,10 @@ class WeaviateVectorStore(VectorStoreBase):
         """Initialize Weaviate vector store for pipeline usage (v4+ client)."""
         super().__init__(**kwargs)
         self.collection_name = kwargs["collection_name"]
-        self.embedding_model = SentenceTransformer(kwargs["embedding_model"])
         host = kwargs.get("host", "localhost")
         port = kwargs.get("port", 8080)
         secure = kwargs.get("secure", False)
+        self.embedder = BGEEmbedder()
         if host == "localhost" and port == 8080 and not secure:
             self.client = weaviate.connect_to_local(skip_init_checks=True)
         else:
@@ -35,7 +35,7 @@ class WeaviateVectorStore(VectorStoreBase):
         # Case-insensitive check for collection existence
         existing_collections = [c.lower() for c in self.client.collections.list_all()]
         if self.collection_name.lower() not in existing_collections:
-            embedding_dim = self.embedding_model.get_sentence_embedding_dimension()
+            embedding_dim = 768  # BGE-Base v1.5 output dim
             self.client.collections.create(
                 name=self.collection_name,
                 properties=[
@@ -62,7 +62,7 @@ class WeaviateVectorStore(VectorStoreBase):
             print("ℹ️ No chunks to store")
             return True
         try:
-            embeddings = self.embedding_model.encode(chunks)
+            embeddings = self.embedder.embed_texts(chunks)
             objects = []
             for text, embedding, meta in zip(chunks, embeddings, metadata):
                 obj = {
@@ -84,7 +84,8 @@ class WeaviateVectorStore(VectorStoreBase):
             if self.collection_name not in self.client.collections.list_all():
                 print(f"Collection '{self.collection_name}' does not exist")
                 return []
-            query_embedding = self.embedding_model.encode(query)
+            # Generate query embedding using BGEEmbedder
+            query_embedding = self.embedder.embed_texts(query)[0]
             results = self.collection.query.near_vector(
                 vector=query_embedding.tolist(),
                 limit=limit,
@@ -111,7 +112,7 @@ class WeaviateVectorStore(VectorStoreBase):
             existing_collections = [c.lower() for c in self.client.collections.list_all()]
             if self.collection_name.lower() in existing_collections:
                 self.client.collections.delete(self.collection_name)
-            embedding_dim = self.embedding_model.get_sentence_embedding_dimension()
+            embedding_dim = 768  # BGE-Base v1.5 output dim
             self.client.collections.create(
                 name=self.collection_name,
                 properties=[
@@ -164,7 +165,7 @@ class WeaviateVectorStore(VectorStoreBase):
             return True
         except Exception as e:
             print(f"Error deleting chunk from Weaviate: {str(e)}")
-            return False
+            return False 
     
     def __del__(self):
         try:

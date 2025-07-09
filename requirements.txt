@@ -1,7 +1,7 @@
 # Core dependencies
 numpy>=1.25.0
 torch>=2.1.2
-sentence-transformers>=2.5.0
+sentence-transformers==2.6.1
 
 # Vector stores
 faiss-cpu==1.11.0

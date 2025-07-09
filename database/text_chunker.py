@@ -17,18 +17,6 @@ try:
 except ImportError:
     _HAS_LANGCHAIN = False
 
-def chunk_text(text: str, max_tokens: int = None, overlap: int = None) -> list:
-    """
-    Chunk text using LangChain's RecursiveCharacterTextSplitter by default.
-    Args:
-        text: The text to chunk.
-        max_tokens: Max tokens per chunk (defaults to CHUNK_CONFIG["max_tokens"])
-        overlap: Overlap tokens between chunks (defaults to CHUNK_CONFIG["overlap"])
-    Returns:
-        List of text chunks
-    """
-    return recursive_chunk_text(text, max_tokens, overlap)
-
 def resolve_references(data: Dict[str, Any], ref_path: str) -> Any:
     """Resolve JSON references in Docling format.
     
@@ -147,14 +135,15 @@ def extract_text_from_json(data: Union[Dict, List, str]) -> str:
     
     return ""
 
-def process_pdf_json(json_path: str, source_id: str, vector_store_config: Dict[str, Any]) -> bool:
+def process_pdf_json(json_path: str, source_id: str, vector_store_config: Dict[str, Any], chunk_size: int = 512, chunk_overlap: int = 64) -> bool:
     """Process PDF JSON file and store chunks in vector database.
     
     Args:
         json_path: Path to JSON file containing parsed PDF content
         source_id: Identifier for the source document
         vector_store_config: Configuration for the vector store
-    
+        chunk_size: Number of tokens per chunk
+        chunk_overlap: Number of overlapping tokens between chunks
     Returns:
         bool: True if processing was successful
     """
@@ -169,26 +158,31 @@ def process_pdf_json(json_path: str, source_id: str, vector_store_config: Dict[s
         if "texts" in data:
             print(f"Found {len(data['texts'])} text entries")
             
-        # Extract text from any JSON format
-        full_text = extract_text_from_json(data)
+        # Special handling for Landing AI output format
+        if (
+            isinstance(data, dict)
+            and all(isinstance(v, list) and all(isinstance(item, dict) and "captions" in item for item in v) for v in data.values())
+        ):
+            print("Detected Landing AI output format.")
+            # Flatten all captions from all pages
+            all_captions = []
+            for page, items in data.items():
+                for item in items:
+                    all_captions.extend(item["captions"])
+            full_text = "\n\n".join(all_captions)
+        else:
+            # Extract text from any JSON format
+            full_text = extract_text_from_json(data)
         print(f"📝 Extracted text length: {len(full_text)}")
         if full_text:
             print("📝 First 200 characters of extracted text:")
             print(full_text[:200])
         
-        # Hybrid chunking
-        hybrid_chunks = hybrid_chunk_text(full_text)
+        # Always use hybrid chunking
+        hybrid_chunks = hybrid_chunk_text(full_text, max_tokens=chunk_size, overlap=chunk_overlap)
         print(f"✅ Hybrid chunked into {len(hybrid_chunks)} segments.")
         print(f"Chunk types: {[chunk['type'] for chunk in hybrid_chunks[:10]]} ...")
-        
-        # Flatten for embedding/storage
         chunks = flatten_hybrid_chunks(hybrid_chunks)
-        
-        if not chunks:
-            print("❌ No text chunks generated")
-            return False
-        
-        # Prepare metadata for each chunk (include chunk type)
         metadata = []
         for i, chunk in enumerate(hybrid_chunks):
             metadata.append({
@@ -198,6 +192,9 @@ def process_pdf_json(json_path: str, source_id: str, vector_store_config: Dict[s
                 "file_path": json_path,
                 "chunk_type": chunk["type"]
             })
+        if not chunks:
+            print("❌ No text chunks generated")
+            return False
         
         # Store chunks in vector database
         try:
@@ -226,29 +223,6 @@ def is_table(element):
         # You can improve this with regex or structure checks
         return True
     return False
-
-def table_aware_chunking(elements, max_tokens=512, overlap=50):
-    chunks = []
-    buffer = ""
-    for elem in elements:
-        if is_table(elem):
-            # Flush buffer as a chunk before adding the table
-            if buffer.strip():
-                chunks.extend(tokenizer_based_chunking(buffer, max_tokens, overlap))
-                buffer = ""
-            # Add the table as a single chunk (stringify if needed)
-            chunks.append({"type": "table", "content": str(elem)})
-        else:
-            buffer += elem if isinstance(elem, str) else str(elem)
-            buffer += "\n"
-    # Chunk any remaining buffer
-    if buffer.strip():
-        chunks.extend(tokenizer_based_chunking(buffer, max_tokens, overlap))
-    return chunks
-
-def tokenizer_based_chunking(text, max_tokens, overlap):
-    # Use your existing chunk_text logic here
-    return [{"type": "text", "content": chunk} for chunk in chunk_text(text)]
 
 def is_table_block(text_block):
     # Heuristic 1: Table keywords
@@ -318,26 +292,35 @@ def hybrid_chunk_text(text: str, max_tokens: int = None, overlap: int = None) ->
             # Split by paragraphs (double newlines)
             paragraphs = [p for p in re.split(r'\n\s*\n', block_content) if p.strip()]
             for para in paragraphs:
-                # If paragraph is too long, split by sentences
+                # If paragraph is too long, use RecursiveCharacterTextSplitter if available
                 if len(tokenizer.encode(para, add_special_tokens=False)) > max_tokens:
-                    # Split by sentences (simple split, can use nltk for better)
-                    sentences = re.split(r'(?<=[.!?])\s+', para)
-                    for sent in sentences:
-                        if not sent.strip():
-                            continue
-                        # Recursively split if still too long
-                        tokens = tokenizer.encode(sent, add_special_tokens=False)
-                        if len(tokens) > max_tokens:
-                            # Token-based split
-                            start = 0
-                            while start < len(tokens):
-                                end = min(start + max_tokens, len(tokens))
-                                chunk = tokenizer.decode(tokens[start:end])
-                                if chunk.strip():
-                                    chunks.append({"type": "text", "content": chunk})
-                                start += max_tokens - overlap
-                        else:
-                            chunks.append({"type": "text", "content": sent.strip()})
+                    if _HAS_LANGCHAIN:
+                        splitter = RecursiveCharacterTextSplitter(
+                            chunk_size=max_tokens,
+                            chunk_overlap=overlap,
+                            separators=["\n\n", "\n", ".", "!", "?", " ", ""]
+                        )
+                        rec_chunks = splitter.split_text(para)
+                        for rec_chunk in rec_chunks:
+                            if rec_chunk.strip():
+                                chunks.append({"type": "text", "content": rec_chunk.strip()})
+                    else:
+                        # Fallback: Split by sentences, then by tokens
+                        sentences = re.split(r'(?<=[.!?])\s+', para)
+                        for sent in sentences:
+                            if not sent.strip():
+                                continue
+                            tokens = tokenizer.encode(sent, add_special_tokens=False)
+                            if len(tokens) > max_tokens:
+                                start = 0
+                                while start < len(tokens):
+                                    end = min(start + max_tokens, len(tokens))
+                                    chunk = tokenizer.decode(tokens[start:end])
+                                    if chunk.strip():
+                                        chunks.append({"type": "text", "content": chunk})
+                                    start += max_tokens - overlap
+                            else:
+                                chunks.append({"type": "text", "content": sent.strip()})
                 else:
                     chunks.append({"type": "text", "content": para.strip()})
     return chunks
@@ -351,47 +334,4 @@ def flatten_hybrid_chunks(hybrid_chunks: List[Dict[str, str]]) -> List[str]:
     Returns:
         List of text chunks (tables and text as plain text)
     """
-    return [chunk["content"] for chunk in hybrid_chunks]
-
-def recursive_chunk_text(text: str, max_tokens: int = None, overlap: int = None) -> list:
-    """
-    Chunk text using LangChain's RecursiveCharacterTextSplitter.
-    Args:
-        text: The text to chunk.
-        max_tokens: Max tokens per chunk (defaults to CHUNK_CONFIG["max_tokens"])
-        overlap: Overlap tokens between chunks (defaults to CHUNK_CONFIG["overlap"])
-    Returns:
-        List of text chunks
-    """
-    if not _HAS_LANGCHAIN:
-        raise ImportError("LangChain is not installed. Please install langchain to use recursive chunking.")
-    if max_tokens is None:
-        max_tokens = CHUNK_CONFIG["max_tokens"]
-    if overlap is None:
-        overlap = CHUNK_CONFIG["overlap"]
-    splitter = RecursiveCharacterTextSplitter(
-        chunk_size=max_tokens,
-        chunk_overlap=overlap,
-        separators=["\n\n", "\n", ".", "!", "?", " ", ""]
-    )
-    return splitter.split_text(text)
-
-def chunk_text_with_strategy(text: str, strategy: str = "tokenizer", max_tokens: int = None, overlap: int = None) -> list:
-    """
-    Chunk text using the selected strategy.
-    Args:
-        text: The text to chunk.
-        strategy: 'tokenizer', 'hybrid', or 'recursive'
-        max_tokens: Max tokens per chunk
-        overlap: Overlap tokens between chunks
-    Returns:
-        List of text chunks
-    """
-    if strategy == "tokenizer":
-        return chunk_text(text) if max_tokens is None and overlap is None else chunk_text(text, max_tokens, overlap)
-    elif strategy == "hybrid":
-        return hybrid_chunk_text(text, max_tokens, overlap)
-    elif strategy == "recursive":
-        return recursive_chunk_text(text, max_tokens, overlap)
-    else:
-        raise ValueError(f"Unknown chunking strategy: {strategy}") 
+    return [chunk["content"] for chunk in hybrid_chunks] 

@@ -1,0 +1,16 @@
+name: grobid_env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - pip:
+      - langchain-community
+      - grobid-client==0.8.2
+      - pypdf
+      - tqdm
+      - requests
+      - lxml
+      - beautifulsoup4
+      # Add any other dependencies your pipeline or parser needs

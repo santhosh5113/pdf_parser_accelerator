@@ -13,7 +13,7 @@ class PineconeVectorStore(VectorStoreBase):
                  environment: str,
                  index_name: str = "pdf_chunks",
                  collection_name: str = "pdf_chunks",
-                 embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
+                 embedding_model: str = "BAAI/bge-base-en-v1.5",
                  **kwargs):
         """Initialize Pinecone client and index."""
         self.api_key = api_key or os.getenv("PINECONE_API_KEY")

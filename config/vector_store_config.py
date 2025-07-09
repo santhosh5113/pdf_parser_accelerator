@@ -5,7 +5,7 @@ from typing import Dict, Any
 # Common configuration
 COMMON_CONFIG = {
     "collection_name": "pdf_chunks",
-    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2"
+    "embedding_model": "BAAI/bge-base-en-v1.5"
 }
 
 # ChromaDB configuration
@@ -19,7 +19,8 @@ CHROMA_CONFIG: Dict[str, Any] = {
 QDRANT_CONFIG: Dict[str, Any] = {
     **COMMON_CONFIG,
     "type": "qdrant",
-    "location": "http://localhost:6333",
+    "location": "https://a2cb6e04-027f-467e-8b2b-d072eb273104.us-west-1-0.aws.cloud.qdrant.io",  # Qdrant Cloud URL
+    "api_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.Eshuq8y4pwCbFZJDRxXIG0MXw16Kb2Y9NdmrpBW1l64",  # Add this line
     "use_sparse": True  # Enable hybrid search
 }
 

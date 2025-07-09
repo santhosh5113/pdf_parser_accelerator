@@ -27,7 +27,7 @@ RUN mkdir -p /app/faiss_index /app/uploads /app/processed
 ENV PYTHONPATH=/app
 ENV VECTOR_STORE_TYPE=faiss
 ENV FAISS_INDEX_PATH=/app/faiss_index
-ENV EMBEDDING_MODEL=sentence-transformers/all-mpnet-base-v2
+ENV EMBEDDING_MODEL=BAAI/bge-base-en-v1.5
 
 # Copy application code
 COPY . .

@@ -3,6 +3,7 @@ import os
 import tempfile
 import subprocess
 import json
+import glob
 
 st.set_page_config(layout="wide", page_title="PDF Parser Accelerator")
 
@@ -107,29 +108,69 @@ st.markdown("<h1 style='text-align:center; font-size:2.5rem; font-weight:900; ma
 st.markdown("<div class='section-title'>📄 Upload Your PDF</div>", unsafe_allow_html=True)
 uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
 
-# ==== CHUNKING OPTIONS ====
-st.markdown("<div class='section-title'>✂️ Chunking Options</div>", unsafe_allow_html=True)
-with st.expander("⚙️ Advanced Settings", expanded=True):
-    chunk_cols = st.columns(2)
-    with chunk_cols[0]:
-        chunk_size = st.selectbox("Chunk Size", [256, 512, 1024, 2048], index=1,
-                                  help="Number of tokens per chunk", format_func=lambda x: f"{x} tokens")
-    with chunk_cols[1]:
-        chunk_overlap = st.selectbox("Chunk Overlap", [0, 32, 64, 128], index=1,
-                                     help="Overlap between chunks", format_func=lambda x: f"{x} tokens")
-    st.session_state['chunk_size'] = chunk_size
-    st.session_state['chunk_overlap'] = chunk_overlap
+# ==== VIEW EXISTING PARSED OUTPUT ====
+st.markdown("<div class='section-title'>📂 View Parsed Output</div>", unsafe_allow_html=True)
+json_files = sorted(glob.glob("shared/output_json/*.json"))
+json_file_display = [os.path.basename(f) for f in json_files]
+selected_json = st.selectbox("Select an output JSON to view", ["(None)"] + json_file_display, index=0)
 
-# ==== EMBEDDING CARD ====
-st.markdown("<div class='section-title'>🧬 Embedding Model</div>", unsafe_allow_html=True)
-st.markdown("""
-<div class='vector-card-dark' tabindex='0'>
-    <div style='font-size:2.2rem; color:#21cbf3; margin-bottom:0.2em; text-shadow:0 2px 8px #111;'>🧬</div>
-    <div style='font-weight:900; font-size:1.18em; margin-bottom:0.08em; color:#fff;'>Embeddings</div>
-    <div style='font-size:1.01em; color:#e0e0e0; margin-bottom:0.07em; text-align:center;'>Model: <code>sentence-transformers/all-MiniLM-L6-v2</code></div>
-    <div style='font-size:0.91em; color:#90caf9; text-align:center;'>Library: <code>sentence-transformers</code> (HuggingFace + PyTorch)</div>
-</div>
-""", unsafe_allow_html=True)
+if selected_json != "(None)":
+    selected_json_path = os.path.join("shared/output_json", selected_json)
+    try:
+        with open(selected_json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        st.markdown("### 📦 Extracted Data Preview (from file)")
+        if isinstance(data, dict):
+            st.write("Output JSON keys:", list(data.keys()))
+        elif isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
+            st.write("Output is a list of dicts. Keys of first element:", list(data[0].keys()))
+        else:
+            st.write("Output is a list or another type:", type(data))
+        if isinstance(data, dict) and "text" in data:
+            st.code(data["text"][:500], language="markdown")
+        view_full_json = st.checkbox("Show full output JSON (from file)", key="view_full_json_file")
+        if view_full_json:
+            with st.expander("Full Output JSON (from file)", expanded=True):
+                st.json(data)
+    except Exception as e:
+        st.error(f"Failed to load {selected_json}: {e}")
+else:
+    st.info("Select a JSON file above to view its parsed output.")
+
+# ==== CHUNKING OPTIONS + EMBEDDING CARD (COMBINED ROW) ====
+st.markdown("<div class='section-title'>✂️ Chunking & Embedding</div>", unsafe_allow_html=True)
+chunk_embed_cols = st.columns([1, 1, 0.5])
+
+with chunk_embed_cols[0]:
+    st.markdown("""
+    <div style='display:flex; flex-direction:column; justify-content:center; height:100%;'>
+        <div style='font-size:1.05em; color:#21cbf3; font-weight:600; margin-bottom:0.2em;'>Chunk Size</div>
+    </div>
+    """, unsafe_allow_html=True)
+    chunk_size = st.selectbox(" ", [256, 512, 1024, 2048], index=1,
+        help="Number of tokens per chunk", format_func=lambda x: f"{x} tokens", key="chunk_size_sb")
+
+with chunk_embed_cols[1]:
+    st.markdown("""
+    <div style='display:flex; flex-direction:column; justify-content:center; height:100%;'>
+        <div style='font-size:1.05em; color:#21cbf3; font-weight:600; margin-bottom:0.2em;'>Chunk Overlap</div>
+    </div>
+    """, unsafe_allow_html=True)
+    chunk_overlap = st.selectbox("  ", [0, 32, 64, 128], index=1,
+        help="Overlap between chunks", format_func=lambda x: f"{x} tokens", key="chunk_overlap_sb")
+
+with chunk_embed_cols[2]:
+    st.markdown("""
+    <div class='vector-card-dark' style='min-width:200px; max-width:220px; min-height:140px; max-height:140px; padding:0.7em 0.5em; display:flex; flex-direction:column; justify-content:center; align-items:center;'>
+        <div style='font-size:1.5rem; color:#21cbf3; margin-bottom:0.1em; text-shadow:0 2px 8px #111;'>🧬</div>
+        <div style='font-weight:800; font-size:1em; margin-bottom:0.05em; color:#fff;'>Embeddings</div>
+        <div style='font-size:0.85em; color:#e0e0e0; margin-bottom:0.03em; text-align:center;'>Model: <code>BAAI/bge-base-en-v1.5</code></div>
+        <div style='font-size:0.8em; color:#90caf9; text-align:center;'>Library: <code>sentence-transformers</code></div>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.session_state['chunk_size'] = chunk_size
+st.session_state['chunk_overlap'] = chunk_overlap
 
 # ==== VECTOR DB CARDS ====
 st.markdown("<div class='section-title'>🧠 Choose a Vector Database</div>", unsafe_allow_html=True)
@@ -162,7 +203,7 @@ if 'vector_store' in st.session_state:
         vector_store_idx = 0
 vector_store_display = st.selectbox("Select Vector Store Backend", vector_store_display_names, index=vector_store_idx)
 vector_store = next(c['name'] for c in VECTOR_DB_CARDS if c['name'].capitalize() == vector_store_display)
-st.session_state['vector_store'] = vector_store_display
+st.session_state['vector_store'] = vector_store
 
 # ==== PARSE BUTTON ====
 st.markdown("<div style='display:flex; justify-content:center; margin-top:2em; margin-bottom:2em;'>", unsafe_allow_html=True)
@@ -179,26 +220,30 @@ if uploaded_file and run_button and not st.session_state['pipeline_running']:
             tmp_pdf.write(uploaded_file.read())
             tmp_pdf_path = tmp_pdf.name
 
-        output_json = os.path.join("shared/output_json", f"{os.path.basename(tmp_pdf_path)}.json")
+    original_name = uploaded_file.name.rsplit('.', 1)[0]
+    output_json = os.path.join("shared/output_json", f"{original_name}.json")
 
-        cmd = [
-            "python", "-m", "database.run_pipeline",
+    cmd = [
+        "python", "-m", "database.run_pipeline",
             tmp_pdf_path, output_json,
             "--vector-store", vector_store,
             "--chunk-size", str(chunk_size),
             "--chunk-overlap", str(chunk_overlap)
-        ]
+    ]
 
-        st.write("⏳ Parsing in progress...")
-        output_lines = []
-        output_container = st.empty()
-        env = os.environ.copy()
-        env["PYTHONUNBUFFERED"] = "1"
-        with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, env=env) as proc:
-            for line in proc.stdout:
-                output_lines.append(line.rstrip())
-                output_container.text('\n'.join(output_lines))
-            proc.wait()
+    st.write("⏳ Parsing in progress...")
+    output_lines = []
+    output_container = st.empty()
+    env = os.environ.copy()
+    env["PYTHONUNBUFFERED"] = "1"
+    with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, env=env) as proc:
+        for line in proc.stdout:
+            output_lines.append(line.rstrip())
+            output_container.text('\n'.join(output_lines))
+        proc.wait()
+
+    if proc.returncode != 0:
+        st.error("Pipeline failed. See output above for details.")
 
     st.session_state['pipeline_running'] = False
 
@@ -218,7 +263,23 @@ if uploaded_file and run_button and not st.session_state['pipeline_running']:
     if os.path.exists(output_json):
         with open(output_json, "r", encoding="utf-8") as f:
             data = json.load(f)
-        st.markdown("### 📦 Extracted Data Preview")
-        st.write("Output JSON keys:", list(data.keys()))
-        if "text" in data:
+        st.markdown("## 🆕 Latest Parsed Output")
+        # Add a download button for the latest output JSON
+        with open(output_json, "rb") as f_download:
+            st.download_button(
+                label="⬇️ Download latest output JSON",
+                data=f_download,
+                file_name=os.path.basename(output_json),
+                mime="application/json"
+            )
+        st.markdown("### 📦 Extracted Data Preview (latest parse)")
+        if isinstance(data, dict):
+            st.write("Output JSON keys:", list(data.keys()))
+        elif isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
+            st.write("Output is a list of dicts. Keys of first element:", list(data[0].keys()))
+        else:
+            st.write("Output is a list or another type:", type(data))
+        if isinstance(data, dict) and "text" in data:
             st.code(data["text"][:500], language="markdown")
+
+    os.remove(tmp_pdf_path)

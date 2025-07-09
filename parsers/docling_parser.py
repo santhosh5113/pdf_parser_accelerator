@@ -4,7 +4,9 @@ import sys
 import json
 import os
 import fitz  # PyMuPDF
-from docling.document_converter import DocumentConverter
+from docling.document_converter import DocumentConverter, PdfFormatOption
+from docling.datamodel.base_models import InputFormat
+from docling.datamodel.pipeline_options import PdfPipelineOptions
 
 def extract_images_from_pdf(pdf_path, output_dir):
     doc = fitz.open(pdf_path)
@@ -45,7 +47,12 @@ def main():
 
     # 1. Run Docling conversion
     try:
-        converter = DocumentConverter()
+        pipeline_options = PdfPipelineOptions(images_scale=4.17)
+        converter = DocumentConverter(
+            format_options={
+                InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
+            }
+        )
         result = converter.convert(input_pdf)
         print("✅ Docling conversion completed.")
     except Exception as e:

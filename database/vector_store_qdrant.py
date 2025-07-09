@@ -2,7 +2,7 @@ from typing import List, Dict, Any, Optional
 import uuid
 from qdrant_client import QdrantClient
 from qdrant_client.http import models
-from sentence_transformers import SentenceTransformer
+from database.bge_embedder import BGEEmbedder
 from .vector_store_base import VectorStoreBase
 
 class QdrantVectorStore(VectorStoreBase):
@@ -11,21 +11,20 @@ class QdrantVectorStore(VectorStoreBase):
     def __init__(self, 
                  collection_name: str = "pdf_chunks",
                  location: str = ":memory:",  # Use ":memory:" for testing, URL for production
-                 embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
                  **kwargs):
         """Initialize Qdrant client and collection.
         
         Args:
             collection_name: Name of the collection to store vectors
             location: Location of Qdrant server (":memory:" or URL)
-            embedding_model: Model to use for text embeddings
         """
         self.collection_name = collection_name
-        self.client = QdrantClient(location=location)
-        self.embedding_model = SentenceTransformer(embedding_model)
-        
-        # Get vector size from model
-        self.vector_size = self.embedding_model.get_sentence_embedding_dimension()
+        self.client = QdrantClient(
+            location=location,
+            api_key=kwargs.get("api_key")
+        )
+        self.embedder = BGEEmbedder()
+        self.vector_size = 768  # BGE-Base v1.5 output dim
         
         # Create collection if it doesn't exist
         self._create_collection()
@@ -64,8 +63,8 @@ class QdrantVectorStore(VectorStoreBase):
             return True
         
         try:
-            # Generate embeddings
-            embeddings = self.embedding_model.encode(chunks)
+            # Generate embeddings using BGEEmbedder
+            embeddings = self.embedder.embed_texts(chunks)
             
             # Prepare points for insertion
             points = []
@@ -101,8 +100,8 @@ class QdrantVectorStore(VectorStoreBase):
             List of dictionaries containing search results
         """
         try:
-            # Generate query embedding
-            query_vector = self.embedding_model.encode(query)
+            # Generate query embedding using BGEEmbedder
+            query_vector = self.embedder.embed_texts(query)[0]
             
             # Search in collection
             results = self.client.search(

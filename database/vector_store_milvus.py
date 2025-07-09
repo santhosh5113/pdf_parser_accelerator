@@ -11,7 +11,7 @@ from pymilvus import (
     DataType,
     utility
 )
-from sentence_transformers import SentenceTransformer
+from database.bge_embedder import BGEEmbedder
 
 from .vector_store_base import VectorStoreBase
 
@@ -24,7 +24,6 @@ class MilvusVectorStore(VectorStoreBase):
         Args:
             **kwargs: Configuration arguments including:
                 - collection_name: Name of the collection in Milvus
-                - embedding_model: Name of the HuggingFace model to use for embeddings
                 - host: Milvus server host (default: localhost)
                 - port: Milvus server port (default: 19530)
         """
@@ -32,9 +31,9 @@ class MilvusVectorStore(VectorStoreBase):
         
         # Store configuration
         self.collection_name = kwargs["collection_name"]
-        self.embedding_model = SentenceTransformer(kwargs["embedding_model"])
         self.host = kwargs.get("host", "localhost")
         self.port = kwargs.get("port", 19530)
+        self.embedder = BGEEmbedder()
         
         # Connect to Milvus
         connections.connect(
@@ -54,7 +53,7 @@ class MilvusVectorStore(VectorStoreBase):
             FieldSchema(name="text", dtype=DataType.VARCHAR, max_length=65535),
             FieldSchema(name="source", dtype=DataType.VARCHAR, max_length=255),
             FieldSchema(name="metadata_json", dtype=DataType.VARCHAR, max_length=65535),
-            FieldSchema(name="vector", dtype=DataType.FLOAT_VECTOR, dim=384)  # Dimension from all-MiniLM-L6-v2
+            FieldSchema(name="vector", dtype=DataType.FLOAT_VECTOR, dim=768)  # Dimension from BAAI/bge-base-en-v1.5
         ]
         
         # Create schema
@@ -69,9 +68,9 @@ class MilvusVectorStore(VectorStoreBase):
             
             # Create IVF_FLAT index for vector field
             index_params = {
-                "metric_type": "L2",
-                "index_type": "IVF_FLAT",
-                "params": {"nlist": 1024}
+                "metric_type": "COSINE",  # or "L2" if you prefer
+                "index_type": "HNSW",
+                "params": {"M": 16, "efConstruction": 200}
             }
             collection.create_index(field_name="vector", index_params=index_params)
     
@@ -99,10 +98,8 @@ class MilvusVectorStore(VectorStoreBase):
             processed_chunks = []
             for chunk in chunks:
                 if isinstance(chunk, list):
-                    # If chunk is a list of strings, join them
                     if all(isinstance(item, str) for item in chunk):
                         chunk = " ".join(chunk)
-                    # If chunk is a list of dicts, extract text values
                     elif all(isinstance(item, dict) for item in chunk):
                         text_parts = []
                         for item in chunk:
@@ -112,12 +109,11 @@ class MilvusVectorStore(VectorStoreBase):
                                     break
                         chunk = " ".join(text_parts)
                     else:
-                        # If we can't process it, convert to string
                         chunk = str(chunk)
                 processed_chunks.append(str(chunk))  # Ensure all chunks are strings
             
-            # Generate embeddings
-            embeddings = self.embedding_model.encode(processed_chunks)
+            # Generate embeddings using BGEEmbedder
+            embeddings = self.embedder.embed_texts(processed_chunks)
             
             # Prepare data
             data = [
@@ -158,8 +154,8 @@ class MilvusVectorStore(VectorStoreBase):
             # Load collection
             collection.load()
             
-            # Generate query embedding
-            query_embedding = self.embedding_model.encode(query)
+            # Generate query embedding using BGEEmbedder
+            query_embedding = self.embedder.embed_texts(query)[0]
             
             # Search parameters
             search_params = {

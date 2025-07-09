@@ -4,6 +4,7 @@ from chromadb.config import Settings
 from chromadb.utils import embedding_functions
 from typing import List, Dict, Any
 from .vector_store_base import VectorStoreBase
+from database.bge_embedder import BGEEmbedder
 
 class ChromaVectorStore(VectorStoreBase):
     """ChromaDB implementation of vector store."""
@@ -11,27 +12,19 @@ class ChromaVectorStore(VectorStoreBase):
     def __init__(self, 
                 collection_name: str = "pdf_chunks",
                 db_path: str = "./chroma_db",
-                embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2",
                 **kwargs):
         """Initialize ChromaDB client and collection.
         
         Args:
             collection_name: Name of the collection
             db_path: Path to store ChromaDB files
-            embedding_model: Model to use for embeddings
         """
         self.collection_name = collection_name
         self.client = chromadb.PersistentClient(path=db_path)
-        
-        # Set up embedding function
-        self.embedding_func = embedding_functions.SentenceTransformerEmbeddingFunction(
-            model_name=embedding_model
-        )
-        
-        # Create or get collection
+        self.embedder = BGEEmbedder()
+        # Create or get collection (no embedding_function, we pass vectors directly)
         self.collection = self.client.get_or_create_collection(
-            name=collection_name,
-            embedding_function=self.embedding_func
+            name=collection_name
         )
     
     def store_chunks(self, chunks: List[str], metadata: List[Dict[str, Any]], **kwargs) -> bool:
@@ -53,11 +46,15 @@ class ChromaVectorStore(VectorStoreBase):
             # Generate unique IDs for chunks
             ids = [str(uuid.uuid4()) for _ in chunks]
             
+            # Generate embeddings using BGEEmbedder
+            embeddings = self.embedder.embed_texts(chunks)
+            
             # Add chunks to collection
             self.collection.add(
                 documents=chunks,
                 metadatas=metadata,
-                ids=ids
+                ids=ids,
+                embeddings=embeddings
             )
             return True
         except Exception as e:
@@ -75,8 +72,10 @@ class ChromaVectorStore(VectorStoreBase):
             List of dictionaries containing search results
         """
         try:
+            # Generate query embedding using BGEEmbedder
+            query_embedding = self.embedder.embed_texts(query)[0]
             results = self.collection.query(
-                query_texts=[query],
+                query_embeddings=[query_embedding],
                 n_results=limit,
                 include=["documents", "metadatas", "distances"]
             )
@@ -148,8 +147,7 @@ class ChromaVectorStore(VectorStoreBase):
                 
                 # Recreate the collection
                 self.collection = self.client.create_collection(
-                    name=self.collection_name,
-                    embedding_function=self.embedding_model
+                    name=self.collection_name
                 )
             return True
         except Exception as e:
