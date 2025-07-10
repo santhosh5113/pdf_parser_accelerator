@@ -158,8 +158,22 @@ def process_pdf_json(json_path: str, source_id: str, vector_store_config: Dict[s
         if "texts" in data:
             print(f"Found {len(data['texts'])} text entries")
             
-        # Special handling for Landing AI output format
+        # Special handling for PyMuPDF output format
         if (
+            isinstance(data, dict)
+            and "text_by_page" in data
+            and isinstance(data["text_by_page"], dict)
+            and all(isinstance(v, str) for v in data["text_by_page"].values())
+        ):
+            print("Detected PyMuPDF output format.")
+            # Concatenate all page texts in order
+            full_text = "\n\n".join(
+                data["text_by_page"][str(i)]
+                for i in range(len(data["text_by_page"]))
+                if str(i) in data["text_by_page"]
+            )
+        # Special handling for Landing AI output format
+        elif (
             isinstance(data, dict)
             and all(isinstance(v, list) and all(isinstance(item, dict) and "captions" in item for item in v) for v in data.values())
         ):

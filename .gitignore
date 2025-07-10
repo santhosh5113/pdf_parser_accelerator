@@ -133,4 +133,4 @@ volumes/
 
 # Ignore uploads/processed folders
 uploads/
-processed/
+processed/LLaVA/

@@ -1,6 +1,7 @@
 """Configuration for vector store settings."""
 
 from typing import Dict, Any
+import os
 
 # Common configuration
 COMMON_CONFIG = {
@@ -20,7 +21,7 @@ QDRANT_CONFIG: Dict[str, Any] = {
     **COMMON_CONFIG,
     "type": "qdrant",
     "location": "https://a2cb6e04-027f-467e-8b2b-d072eb273104.us-west-1-0.aws.cloud.qdrant.io",  # Qdrant Cloud URL
-    "api_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.Eshuq8y4pwCbFZJDRxXIG0MXw16Kb2Y9NdmrpBW1l64",  # Add this line
+    "api_key": os.getenv("QDRANT_API_KEY"),
     "use_sparse": True  # Enable hybrid search
 }
 

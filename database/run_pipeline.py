@@ -130,7 +130,7 @@ def main():
     if args.store_only:
         from .text_chunker import process_pdf_json
         config = get_vector_store_config(args.vector_store)
-        success = process_pdf_json(args.output_json, os.path.basename(args.input_pdf), config, args.chunk_size, args.chunk_overlap, args.chunk_strategy)
+        success = process_pdf_json(args.output_json, os.path.basename(args.input_pdf), config, args.chunk_size, args.chunk_overlap)
         if success:
             print(f"✅ Successfully stored in {args.vector_store} vector database")
         else:
@@ -159,11 +159,12 @@ def main():
         print("[DEBUG] No specific environment required for this vector store.")
 
     # PHASE 1: Analysis and parsing (in pipeline_env)
-    from analyzer.analyze_pdf import analyze_pdf
+    from analyzer.analyze_pdf2 import analyze_pdf_with_ollama as analyze_pdf
     category = analyze_pdf(args.input_pdf)
     print(f"📊 Detected category: {category}")
 
     # Route to appropriate parser (still in pipeline_env)
+    category = category.replace(" ", "_").lower()
     if category == "native_text":
         run_parser("pdfminer_env", "pdfminer_parser.py", args.input_pdf, args.output_json)
     elif category == "native_table":
@@ -172,7 +173,9 @@ def main():
         run_parser("landingai_env", "landingai_parser.py", args.input_pdf, args.output_json)
     elif category == "scanned_math_heavy":
         run_parser("landingai_env", "landingai_parser.py", args.input_pdf, args.output_json)
-    elif category == "scanned_pdf":
+    elif category == "scanned_text":
+        run_parser("llama_parse_env", "llama_parser.py", args.input_pdf, args.output_json)
+    elif category == "scanned_table":
         run_parser("llama_parse_env", "llama_parser.py", args.input_pdf, args.output_json)
     else:
         print("❌ Unable to determine suitable parser for this PDF.")
@@ -199,7 +202,7 @@ def main():
     # If already in the correct environment, run storage step directly
     from .text_chunker import process_pdf_json
     config = get_vector_store_config(args.vector_store)
-    success = process_pdf_json(args.output_json, os.path.basename(args.input_pdf), config, args.chunk_size, args.chunk_overlap, args.chunk_strategy)
+    success = process_pdf_json(args.output_json, os.path.basename(args.input_pdf), config, args.chunk_size, args.chunk_overlap)
     if success:
         print(f"✅ Successfully stored in {args.vector_store} vector database")
     else:
