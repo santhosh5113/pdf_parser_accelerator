@@ -37,6 +37,7 @@ class FaissVectorStore(VectorStoreBase):
     
     def _initialize_index(self):
         """Initialize or load FAISS index and metadata."""
+        self.metric = 'cosine'  # Always set metric
         self.index_file = os.path.join(self.index_path, f"{self.collection_name}.index")
         self.meta_file = os.path.join(self.index_path, f"{self.collection_name}.meta")
         # Initialize metadata storage
@@ -55,7 +56,6 @@ class FaissVectorStore(VectorStoreBase):
             self.index.hnsw.efConstruction = 200
             # Set to cosine similarity (inner product, then normalize vectors)
             faiss.normalize_L2 = getattr(faiss, 'normalize_L2', None)  # For compatibility
-            self.metric = 'cosine'
 
     def _save_index(self):
         """Save FAISS index and metadata to disk."""

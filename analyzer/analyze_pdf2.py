@@ -9,25 +9,7 @@ import camelot
 import re
 
 PDF_PATH = None  # Will be set in main
-PROMPT = (
-    "You are an expert in document layout analysis. "
-    "Classify ONLY THIS SINGLE PAGE image as one of: "
-    "'Native Text', 'Native Table', 'Native Math Heavy', 'Scanned Text', 'Scanned Table', or 'Scanned Math Heavy'. "
-    "Definitions: "
-    "'Native' = machine-readable/selectable text; 'Scanned' = image-based, non-selectable text. "
-    "'Math Heavy' = any presence of equations, mathematical symbols, or scientific notation. "
-    "'Table' = clear tabular structure, indicated by gridlines, rows/columns, cell borders, or regularly aligned text. "
-    "If a table or math is present, classify accordingly even if mixed with text. "
-    "Return ONLY the predicted class label and a one-line justification. "
-    "Do NOT mention or invent other pages. "
-    "Examples:\n"
-    "Native Text – The page contains only machine-readable text.\n"
-    "Native Table – The page contains a machine-readable table (gridlines, columns, or cell borders).\n"
-    "Native Math Heavy – The page contains equations or scientific notation.\n"
-    "Scanned Text – The page is an image with mostly text.\n"
-    "Scanned Table – The page is an image with a table (gridlines, columns, or cell borders).\n"
-    "Scanned Math Heavy – The page is an image with equations or scientific notation."
-)
+
 TEMP_IMAGE_DIR = "temp_images"
 
 OLLAMA_API_URL = "http://localhost:11434/api/generate"  # Ollama default
@@ -35,19 +17,28 @@ OLLAMA_API_URL = "http://localhost:11434/api/generate"  # Ollama default
 os.makedirs(TEMP_IMAGE_DIR, exist_ok=True)
 
 def analyze_image_with_ollama(image_path: str, prompt: str, model: str = "llava") -> str:
+    # Add example images for few-shot prompting
+    example_table_path = os.path.join(TEMP_IMAGE_DIR, "example_table.png")
+    example_math_path = os.path.join(TEMP_IMAGE_DIR, "example_math.png")
+    images_b64 = []
+    # Encode example images if they exist
+    for ex_path in [example_table_path, example_math_path]:
+        if os.path.exists(ex_path):
+            with open(ex_path, "rb") as img_file:
+                images_b64.append(base64.b64encode(img_file.read()).decode("utf-8"))
+    # Encode the actual page image
     with open(image_path, "rb") as img_file:
-        img_b64 = base64.b64encode(img_file.read()).decode("utf-8")
+        images_b64.append(base64.b64encode(img_file.read()).decode("utf-8"))
     payload = {
         "model": model,
         "prompt": prompt,
-        "images": [img_b64]
+        "images": images_b64
     }
     try:
         response = requests.post(OLLAMA_API_URL, json=payload, timeout=120, stream=True)
         result = ""
         for line in response.iter_lines():
             if line:
-                # Ollama streams JSON lines, each with a 'response' key
                 try:
                     data = json.loads(line.decode("utf-8"))
                     result += data.get("response", "")
@@ -125,17 +116,42 @@ def build_llm_prompt(is_native, camelot_table_found, equation_found):
         "If a table or equation is detected, you should strongly consider classifying as 'Native Table' or 'Native Math Heavy' as appropriate, unless the image clearly contradicts this. "
     )
     detection_block = '\n'.join(detection_lines)
-    prompt = (
-        f"{detection_block}\n"
-        "Given this information and the image, classify the page as one of: "
-        "'Native Text', 'Native Table', 'Native Math Heavy', 'Scanned Text', 'Scanned Table', or 'Scanned Math Heavy'. "
-        "Definitions: "
-        "'Native' = machine-readable/selectable text; 'Scanned' = image-based, non-selectable text. "
-        "'Math Heavy' = any presence of equations, mathematical symbols, or scientific notation. "
-        "'Table' = clear tabular structure, indicated by gridlines, rows/columns, cell borders, or regularly aligned text. "
-        "If a table or math is present, classify accordingly even if mixed with text. "
-        "Return ONLY the predicted class label and a one-line justification."
-    )
+   
+    prompt = """
+You are a document classification expert.
+
+You will receive a PDF page as an image and classify it strictly into one of the following six categories:
+
+- Native Text
+- Native Table
+- Native Math Heavy
+- Scanned Text
+- Scanned Table
+- Scanned Math Heavy
+
+---
+
+Step 1: Determine format:
+- Native: Clean, digital, selectable
+- Scanned: Image-based, low-res or photo
+
+Step 2: Determine content type:
+- Table: Visibly structured rows/columns (headers + data)
+- Math Heavy: Equations, variables, math symbols
+- Text: Paragraphs with no table layout or formulas
+
+❗ RULE: Even if the page contains numbers, only classify it as a Table or Math-heavy if the layout clearly shows table structure or math notation.
+
+---
+
+⚠️ REQUIRED: Always return a classification, never leave it blank.
+
+Output:
+---
+Page Classification: <exact one of the 6 categories>
+Reason: <1–2 sentence explanation using visual structure and content>
+---
+"""
     return prompt
 
 def analyze_pdf_with_ollama(pdf_path: str) -> str:
@@ -159,7 +175,7 @@ def analyze_pdf_with_ollama(pdf_path: str) -> str:
         llm_prompt = build_llm_prompt(is_native, camelot_table_found, equation_found)
 
         # Call LLM
-        result = analyze_image_with_ollama(img_path, llm_prompt, model="llava:13b")
+        result = analyze_image_with_ollama(img_path, llm_prompt, model="gemma3:12b")
         label = extract_category(result)
         page_types.append(label)
         print(f"Page {i+1}: {label} (raw: {result})")

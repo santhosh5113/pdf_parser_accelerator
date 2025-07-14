@@ -1,6 +1,5 @@
 from database.vector_store_factory import VectorStoreFactory
 from config.vector_store_config import CHROMA_CONFIG, QDRANT_CONFIG, WEAVIATE_CONFIG, MILVUS_CONFIG, FAISS_CONFIG
-import os
 
 vector_db_configs = [
     CHROMA_CONFIG,
@@ -13,16 +12,17 @@ vector_db_configs = [
 def main():
     for config in vector_db_configs:
         db_type = config.get("type", "unknown")
-        print(f"\nClearing {db_type} vector DB...")
+        print(f"\n--- {db_type.upper()} Vector DB ---")
         try:
             store = VectorStoreFactory.create(config)
-            result = store.clear_collection()
-            if result:
-                print(f"[SUCCESS] Cleared {db_type} vector DB.")
+            chunks = store.get_all_chunks()
+            if not chunks:
+                print("[INFO] No chunks found.")
             else:
-                print(f"[FAIL] Could not clear {db_type} vector DB.")
+                for i, chunk in enumerate(chunks, 1):
+                    print(f"Chunk {i}: {chunk}")
         except Exception as e:
-            print(f"[ERROR] Exception clearing {db_type}: {e}")
+            print(f"[ERROR] Could not retrieve chunks from {db_type}: {e}")
 
 if __name__ == "__main__":
     main() 

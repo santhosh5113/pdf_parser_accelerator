@@ -20,10 +20,12 @@ def main():
     with open(input_pdf, "rb") as f:
         files = {"file": (os.path.basename(input_pdf), f, "application/pdf")}
         headers = {"Authorization": f"Bearer {api_key}"}
+        data = {"preset": "premium"}  # Set parsing mode to premium
         response = requests.post(
             "https://api.cloud.llamaindex.ai/api/parsing/upload",
             headers=headers,
-            files=files
+            files=files,
+            data=data
         )
         resp_json = response.json()
         if "id" not in resp_json:
