@@ -37,6 +37,10 @@ class ChromaVectorStore(VectorStoreBase):
         Returns:
             bool: True if storage was successful
         """
+        # Debug print to confirm method is called and what is being passed
+        print(f"[DEBUG] Chroma store_chunks called with {len(chunks)} chunks.")
+        if len(chunks) > 0:
+            print(f"[DEBUG] First chunk: {repr(chunks[0])}")
         # Skip if no chunks
         if not chunks:
             print("ℹ️ No chunks to store")
@@ -141,14 +145,21 @@ class ChromaVectorStore(VectorStoreBase):
             bool: True if clearing was successful
         """
         try:
-            # Delete the collection if it exists
-            if self.collection_name in self.client.list_collections():
+            print(f"[DEBUG] Chroma DB Path: {self.client._settings.persist_directory if hasattr(self.client, '_settings') else 'unknown'}")
+            print(f"[DEBUG] Collection Name: {self.collection_name}")
+            print(f"[DEBUG] Collections before: {self.client.list_collections()}")
+            # Correctly check if the collection exists by comparing names
+            if any(col.name == self.collection_name for col in self.client.list_collections()):
                 self.client.delete_collection(self.collection_name)
-                
+                print(f"[DEBUG] Deleted collection: {self.collection_name}")
                 # Recreate the collection
                 self.collection = self.client.create_collection(
                     name=self.collection_name
                 )
+                print(f"[DEBUG] Recreated collection: {self.collection_name}")
+            else:
+                print(f"[DEBUG] Collection {self.collection_name} does not exist.")
+            print(f"[DEBUG] Collections after: {self.client.list_collections()}")
             return True
         except Exception as e:
             print(f"Error clearing ChromaDB collection: {str(e)}")

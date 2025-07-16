@@ -44,14 +44,7 @@ def resolve_references(data: Dict[str, Any], ref_path: str) -> Any:
     return current
 
 def extract_text_from_json(data: Union[Dict, List, str]) -> str:
-    """Extract text content from different JSON formats.
-    
-    Args:
-        data: JSON data in various formats
-        
-    Returns:
-        Extracted text content
-    """
+    """Extract text content from different JSON formats, including LandingAI page_map format."""
     if isinstance(data, str):
         return data
     
@@ -72,6 +65,18 @@ def extract_text_from_json(data: Union[Dict, List, str]) -> str:
     if isinstance(data, dict):
         text_parts = []
         
+        # --- LandingAI page_map format ---
+        # All keys are page numbers, values are lists of dicts with 'captions'
+        if all(isinstance(v, list) and all(isinstance(chunk, dict) for chunk in v) for v in data.values()):
+            for page_chunks in data.values():
+                for chunk in page_chunks:
+                    captions = chunk.get('captions', [])
+                    if isinstance(captions, list):
+                        text_parts.extend([str(c) for c in captions if c])
+                    elif isinstance(captions, str):
+                        text_parts.append(captions)
+            return "\n\n".join(text_parts)
+
         # Handle Docling format - direct text entries
         if 'texts' in data and isinstance(data['texts'], list):
             for text_entry in data['texts']:
@@ -135,97 +140,80 @@ def extract_text_from_json(data: Union[Dict, List, str]) -> str:
     
     return ""
 
-def process_pdf_json(json_path: str, source_id: str, vector_store_config: Dict[str, Any], chunk_size: int = 512, chunk_overlap: int = 64) -> bool:
-    """Process PDF JSON file and store chunks in vector database.
-    
-    Args:
-        json_path: Path to JSON file containing parsed PDF content
-        source_id: Identifier for the source document
-        vector_store_config: Configuration for the vector store
-        chunk_size: Number of tokens per chunk
-        chunk_overlap: Number of overlapping tokens between chunks
-    Returns:
-        bool: True if processing was successful
+def table_grid_to_markdown(grid):
+    """Convert a Docling table grid to Markdown table string."""
+    if not grid or not isinstance(grid, list):
+        return ""
+    # Extract header row (first row)
+    header = [cell.get("text", "") for cell in grid[0]]
+    # Extract all rows
+    rows = [[cell.get("text", "") for cell in row] for row in grid]
+    # Markdown formatting
+    md = "| " + " | ".join(header) + " |\n"
+    md += "| " + " | ".join(["---"] * len(header)) + " |\n"
+    for row in rows[1:]:
+        md += "| " + " | ".join(row) + " |\n"
+    return md
+
+def extract_blocks_from_json(data: Union[Dict, List, str]) -> List[Dict[str, str]]:
     """
-    print(f"✅ Loading JSON from: {json_path}")
-    
-    try:
-        with open(json_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-            
-        # Debug: Print JSON structure
-        print("📄 JSON structure:")
-        if "texts" in data:
-            print(f"Found {len(data['texts'])} text entries")
-            
-        # Special handling for PyMuPDF output format
-        if (
-            isinstance(data, dict)
-            and "text_by_page" in data
-            and isinstance(data["text_by_page"], dict)
-            and all(isinstance(v, str) for v in data["text_by_page"].values())
-        ):
-            print("Detected PyMuPDF output format.")
-            # Concatenate all page texts in order
-            full_text = "\n\n".join(
-                data["text_by_page"][str(i)]
-                for i in range(len(data["text_by_page"]))
-                if str(i) in data["text_by_page"]
-            )
-        # Special handling for Landing AI output format
-        elif (
-            isinstance(data, dict)
-            and all(isinstance(v, list) and all(isinstance(item, dict) and "captions" in item for item in v) for v in data.values())
-        ):
-            print("Detected Landing AI output format.")
-            # Flatten all captions from all pages
-            all_captions = []
-            for page, items in data.items():
-                for item in items:
-                    all_captions.extend(item["captions"])
-            full_text = "\n\n".join(all_captions)
-        else:
-            # Extract text from any JSON format
-            full_text = extract_text_from_json(data)
-        print(f"📝 Extracted text length: {len(full_text)}")
-        if full_text:
-            print("📝 First 200 characters of extracted text:")
-            print(full_text[:200])
-        
-        # Always use hybrid chunking
-        hybrid_chunks = hybrid_chunk_text(full_text, max_tokens=chunk_size, overlap=chunk_overlap)
-        print(f"✅ Hybrid chunked into {len(hybrid_chunks)} segments.")
-        print(f"Chunk types: {[chunk['type'] for chunk in hybrid_chunks[:10]]} ...")
-        chunks = flatten_hybrid_chunks(hybrid_chunks)
-        metadata = []
-        for i, chunk in enumerate(hybrid_chunks):
-            metadata.append({
-                "source": source_id,
-                "chunk_index": i,
-                "total_chunks": len(hybrid_chunks),
-                "file_path": json_path,
-                "chunk_type": chunk["type"]
-            })
-        if not chunks:
-            print("❌ No text chunks generated")
-            return False
-        
-        # Store chunks in vector database
-        try:
-            vector_store = VectorStoreFactory.create(vector_store_config)
-            vector_store.store_chunks(chunks, metadata)
-            return True
-        except Exception as e:
-            print(f"❌ Error storing chunks in vector database: {str(e)}")
-            return False
-            
-    except json.JSONDecodeError as e:
-        print(f"❌ Invalid JSON in {json_path}: {str(e)}")
-        return False
-        
-    except Exception as e:
-        print(f"❌ Error processing JSON: {str(e)}")
-        return False
+    Extracts blocks from JSON, leveraging explicit table tags if present.
+    Supports LlamaParse, Docling, LandingAI, and fallback formats.
+    Returns a list of dicts: {"type": "table"|"text", "content": ...}
+    """
+    blocks = []
+    # --- LandingAI page_map extraction ---
+    if isinstance(data, dict) and all(isinstance(v, list) and all(isinstance(chunk, dict) for chunk in v) for v in data.values()):
+        for page_chunks in data.values():
+            for chunk in page_chunks:
+                captions = chunk.get('captions', [])
+                chunk_type = chunk.get('chunk_type', 'text')
+                if isinstance(captions, list):
+                    for caption in captions:
+                        if caption:
+                            blocks.append({"type": chunk_type, "content": str(caption)})
+                elif isinstance(captions, str) and captions:
+                    blocks.append({"type": chunk_type, "content": captions})
+        return blocks
+    # --- Docling extraction: add all texts as text blocks ---
+    if isinstance(data, dict) and "texts" in data and isinstance(data["texts"], list):
+        for text_entry in data["texts"]:
+            if isinstance(text_entry, dict) and "text" in text_entry:
+                blocks.append({"type": "text", "content": text_entry["text"]})
+    # --- Docling table extraction ---
+    if isinstance(data, dict) and "tables" in data and isinstance(data["tables"], list):
+        for table in data["tables"]:
+            # Try to use grid for Markdown
+            grid = table.get("data", {}).get("grid")
+            if grid:
+                table_md = table_grid_to_markdown(grid)
+                if table_md:
+                    blocks.append({"type": "table", "content": table_md})
+            else:
+                # Fallback: join all cell texts
+                cells = table.get("data", {}).get("table_cells", [])
+                cell_texts = [cell.get("text", "") for cell in cells]
+                if cell_texts:
+                    blocks.append({"type": "table", "content": "\n".join(cell_texts)})
+    # --- LlamaParse/other 'items' format ---
+    elif isinstance(data, dict) and "items" in data and isinstance(data["items"], list):
+        for item in data["items"]:
+            if item.get("type") == "table":
+                table_content = item.get("md") or item.get("csv") or str(item.get("rows", ""))
+                if table_content:
+                    blocks.append({"type": "table", "content": table_content})
+            elif item.get("type") == "text":
+                text_content = item.get("value", "")
+                if text_content:
+                    blocks.append({"type": "text", "content": text_content})
+            elif item.get("type") == "heading":
+                heading_content = item.get("value", "")
+                if heading_content:
+                    blocks.append({"type": "text", "content": heading_content})
+    else:
+        # Fallback: treat as a single text block
+        blocks.append({"type": "text", "content": extract_text_from_json(data)})
+    return blocks
 
 def is_table(element):
     # If your element is a dict/object, check for a 'type' field or structure
@@ -267,76 +255,112 @@ def is_table_block(text_block):
 
         return False
 
-def hybrid_chunk_text(text: str, max_tokens: int = None, overlap: int = None) -> List[Dict[str, str]]:
-    """
-    Hybrid chunking: splits text into tables and non-table blocks, preserves tables, splits long blocks recursively.
-    Args:
-        text: The full text to chunk.
-        max_tokens: Max tokens per chunk (defaults to CHUNK_CONFIG["max_tokens"])
-        overlap: Overlap tokens between chunks (defaults to CHUNK_CONFIG["overlap"])
-    Returns:
-        List of dicts: {"type": "text"|"table", "content": ...}
-    """
+def hybrid_chunk_text(text: str, max_tokens: int = None, overlap: int = None, min_chunk_chars: int = 100) -> List[Dict[str, str]]:
     if max_tokens is None:
         max_tokens = CHUNK_CONFIG["max_tokens"]
     if overlap is None:
         overlap = CHUNK_CONFIG["overlap"]
 
-    # Split text into blocks (tables vs. non-tables)
+    # Improved: Group table blocks as a whole
     blocks = []
     current = []
+    in_table = False
     lines = text.splitlines()
     for line in lines:
         if is_table_block(line):
-            if current:
-                blocks.append(("text", "\n".join(current)))
-                current = []
-            blocks.append(("table", line))
+            if not in_table:
+                if current:
+                    blocks.append(("text", "\n".join(current)))
+                    current = []
+                in_table = True
+            current.append(line)
         else:
+            if in_table:
+                blocks.append(("table", "\n".join(current)))
+                current = []
+                in_table = False
             current.append(line)
     if current:
-        blocks.append(("text", "\n".join(current)))
+        blocks.append(("table" if in_table else "text", "\n".join(current)))
 
     # Now process each block
     chunks = []
     for block_type, block_content in blocks:
         if block_type == "table":
-            chunks.append({"type": "table", "content": block_content})
+            # Only add if the table block is not too small
+            if len(block_content.strip()) >= min_chunk_chars:
+                chunks.append({"type": "table", "content": block_content.strip()})
         else:
-            # Split by paragraphs (double newlines)
-            paragraphs = [p for p in re.split(r'\n\s*\n', block_content) if p.strip()]
-            for para in paragraphs:
-                # If paragraph is too long, use RecursiveCharacterTextSplitter if available
-                if len(tokenizer.encode(para, add_special_tokens=False)) > max_tokens:
-                    if _HAS_LANGCHAIN:
-                        splitter = RecursiveCharacterTextSplitter(
-                            chunk_size=max_tokens,
-                            chunk_overlap=overlap,
-                            separators=["\n\n", "\n", ".", "!", "?", " ", ""]
-                        )
-                        rec_chunks = splitter.split_text(para)
-                        for rec_chunk in rec_chunks:
-                            if rec_chunk.strip():
-                                chunks.append({"type": "text", "content": rec_chunk.strip()})
+            # Use RecursiveCharacterTextSplitter for text
+            if _HAS_LANGCHAIN:
+                splitter = RecursiveCharacterTextSplitter(
+                    chunk_size=max_tokens,
+                    chunk_overlap=overlap,
+                    separators=["\n\n", "\n", ".", "!", "?", " ", ""]
+                )
+                rec_chunks = splitter.split_text(block_content)
+                for rec_chunk in rec_chunks:
+                    if len(rec_chunk.strip()) >= min_chunk_chars:
+                        chunks.append({"type": "text", "content": rec_chunk.strip()})
+            else:
+                # Fallback: Split by sentences, then by tokens
+                sentences = re.split(r'(?<=[.!?])\s+', block_content)
+                for sent in sentences:
+                    if not sent.strip():
+                        continue
+                    tokens = tokenizer.encode(sent, add_special_tokens=False)
+                    if len(tokens) > max_tokens:
+                        start = 0
+                        while start < len(tokens):
+                            end = min(start + max_tokens, len(tokens))
+                            chunk = tokenizer.decode(tokens[start:end])
+                            if chunk.strip():
+                                chunks.append({"type": "text", "content": chunk})
+                            start += max_tokens - overlap
                     else:
-                        # Fallback: Split by sentences, then by tokens
-                        sentences = re.split(r'(?<=[.!?])\s+', para)
-                        for sent in sentences:
-                            if not sent.strip():
-                                continue
-                            tokens = tokenizer.encode(sent, add_special_tokens=False)
-                            if len(tokens) > max_tokens:
-                                start = 0
-                                while start < len(tokens):
-                                    end = min(start + max_tokens, len(tokens))
-                                    chunk = tokenizer.decode(tokens[start:end])
-                                    if chunk.strip():
-                                        chunks.append({"type": "text", "content": chunk})
-                                    start += max_tokens - overlap
-                            else:
-                                chunks.append({"type": "text", "content": sent.strip()})
-                else:
-                    chunks.append({"type": "text", "content": para.strip()})
+                        chunks.append({"type": "text", "content": sent.strip()})
+    return chunks
+
+def hybrid_chunk_blocks(blocks, max_tokens=None, overlap=None, min_chunk_chars=100):
+    if max_tokens is None:
+        max_tokens = CHUNK_CONFIG["max_tokens"]
+    if overlap is None:
+        overlap = CHUNK_CONFIG["overlap"]
+    chunks = []
+    for block in blocks:
+        block_type = block["type"]
+        block_content = block["content"]
+        if block_type == "table":
+            if len(block_content.strip()) >= min_chunk_chars:
+                chunks.append({"type": "table", "content": block_content.strip()})
+        else:
+            if _HAS_LANGCHAIN:
+                splitter = RecursiveCharacterTextSplitter(
+                    chunk_size=max_tokens,
+                    chunk_overlap=overlap,
+                    separators=["\n\n", "\n", ".", "!", "?", " ", ""]
+                )
+                rec_chunks = splitter.split_text(block_content)
+                for rec_chunk in rec_chunks:
+                    if len(rec_chunk.strip()) >= min_chunk_chars:
+                        chunks.append({"type": "text", "content": rec_chunk.strip()})
+            else:
+                sentences = re.split(r'(?<=[.!?])\s+', block_content)
+                for sent in sentences:
+                    if not sent.strip():
+                        continue
+                    tokens = tokenizer.encode(sent, add_special_tokens=False)
+                    if len(tokens) > max_tokens:
+                        start = 0
+                        while start < len(tokens):
+                            end = min(start + max_tokens, len(tokens))
+                            chunk = tokenizer.decode(tokens[start:end])
+                            if chunk.strip() and len(chunk.strip()) >= min_chunk_chars:
+                                chunks.append({"type": "text", "content": chunk})
+                            start += max_tokens - overlap
+                    else:
+                        if len(sent.strip()) >= min_chunk_chars:
+                            chunks.append({"type": "text", "content": sent.strip()})
     return chunks
 
 
@@ -349,3 +373,53 @@ def flatten_hybrid_chunks(hybrid_chunks: List[Dict[str, str]]) -> List[str]:
         List of text chunks (tables and text as plain text)
     """
     return [chunk["content"] for chunk in hybrid_chunks] 
+
+def process_pdf_json(json_path: str, source_id: str, vector_store_config: Dict[str, Any], chunk_size: int = 512, chunk_overlap: int = 64, min_chunk_chars: int = 0) -> bool:
+    print(f"✅ Loading JSON from: {json_path}")
+    try:
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        print("📄 JSON structure:")
+        if "texts" in data:
+            print(f"  - texts: {len(data['texts'])}")
+        if "items" in data:
+            print(f"  - items: {len(data['items'])}")
+        if "tables" in data:
+            print(f"  - tables: {len(data['tables'])}")
+        if isinstance(data, dict) and len(data) == 1 and isinstance(list(data.values())[0], list):
+            print(f"  - blocks: {len(list(data.values())[0])}")
+        # Extract blocks using the enhanced logic
+        blocks = extract_blocks_from_json(data)
+        print(f"📝 Extracted {len(blocks)} blocks from JSON")
+        # Hybrid chunking: tables as a whole, text split, but do not omit any chunk
+        chunks = []
+        chunk_index = 0
+        for block in blocks:
+            block_type = block.get("type", "text")
+            content = block.get("content", "")
+            # Apply hybrid chunking to each block
+            split_chunks = hybrid_chunk_text(content, max_tokens=chunk_size, overlap=chunk_overlap)
+            for split_chunk in split_chunks:
+                chunk = {
+                    "id": f"{source_id}_chunk_{chunk_index}",
+                    "text": split_chunk["content"],
+                    "metadata": {
+                        "chunk_index": chunk_index,
+                        "source": source_id,
+                        "chunk_type": split_chunk.get("type", block_type),
+                    }
+                }
+                chunks.append(chunk)
+                chunk_index += 1
+        print(f"✅ Created {len(chunks)} chunks (no filtering by size)")
+        # Store chunks in the vector store
+        store = VectorStoreFactory.create(vector_store_config)
+        # ChromaVectorStore expects store_chunks(chunks, metadata)
+        chunk_texts = [chunk["text"] for chunk in chunks]
+        chunk_metadata = [chunk["metadata"] for chunk in chunks]
+        store.store_chunks(chunk_texts, chunk_metadata)
+        print(f"✅ Stored {len(chunks)} chunks in vector DB")
+        return True
+    except Exception as e:
+        print(f"❌ Error processing PDF JSON: {e}")
+        return False 
