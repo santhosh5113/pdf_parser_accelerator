@@ -73,83 +73,60 @@ facebook/
 faiss_index/
 nougat/
 
-# Docker data volumes
-docker/qdrant/qdrant_storage/
-docker/weaviate/data/
+# Docker data volumes - Comprehensive patterns
+docker/*/volumes/
+docker/*/qdrant_storage/
+docker/*/data/
+docker/*/volumes/*/rdb_data/
+docker/*/volumes/*/rdb_data_meta_kv/
+docker/*/volumes/*/rdb_data/*.log
+docker/*/volumes/*/rdb_data_meta_kv/*.log
+docker/*/.minio.sys/
+docker/*/volumes/minio/.minio.sys/
 
 # Generated output
 shared/output_json/
+shared/output_json/*.json
 
 # OS-specific
 .DS_Store
-
-# Python cache
-__pycache__/
-*.pyc
-
-facebook/nougat-base/pytorch_model.bin
-
-temp_images/
-
-# Ignore generated/test data and outputs
-shared/output_json/
-temp_images/
-faiss_index/
-chroma_db/
-docker/qdrant/qdrant_storage/
-docker/weaviate/data/
-
-# Ignore model weights and large binaries
-facebook/nougat-base/pytorch_model.bin
-nougat/
-facebook/
-
-# Ignore test data
-tests/data/
-tests/data_scanned/
-
-# Ignore macOS and Python cache files
-.DS_Store
-__pycache__/
-*.pyc
-
-# Ignore virtual environments
-venv/
-.env/
-ENV/
-
-# Ignore IDE/project files
-.idea/
-.vscode/
-
-# Ignore build/dist folders
-build/
-dist/
-.eggs/
-*.egg-info/
-
-# Ignore Docker volumes
-volumes/
-
-# Ignore uploads/processed folders
-uploads/
-processed/LLaVA/
-
-# Additional patterns to ignore
-# Log files
-*.log
-
-# Egg info directories
-*.egg-info/
-
-# Docker log files
-docker/*/volumes/*/rdb_data/*.log
-docker/*/volumes/*/rdb_data_meta_kv/*.log
-
-# Additional macOS files
 .DS_Store?
 ._*
 .Spotlight-V100
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Model weights and large binaries
+facebook/nougat-base/pytorch_model.bin
+nougat/
+facebook/
+
+# Temporary files
+temp_images/
+
+# Test data
+tests/data/
+tests/data_scanned/
+
+# Build/dist folders
+build/
+dist/
+.eggs/
+*.egg-info/
+
+# Additional patterns to ignore
+# Log files
+*.log
+
+# Docker log files
+docker/*/volumes/*/rdb_data/*.log
+docker/*/volumes/*/rdb_data_meta_kv/*.log
+
+# Ignore uploads/processed folders
+uploads/
+processed/LLaVA/
