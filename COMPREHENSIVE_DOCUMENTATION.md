@@ -118,7 +118,7 @@ streamlit run streamlit_app.py
 **Purpose**: Contains different PDF analyzers for classifying and understanding PDF content.
 
 **Files**:
-- `analyze_pdf.py` - Basic PDF analyzer using CLIP
+- `analyze_pdf.py` - Basic PDF analyzer 
 - `analyze_pdf2.py` - Ollama-based analyzer with LLaVA models
 - `analyze_pdf3.py` - Enhanced CLIP analyzer with better prompts
 - `analyze_pdf4.py` - OpenAI VLM analyzer using GPT-4 Vision
