@@ -1,3 +1,4 @@
+# Core dependencies
 name: pipeline_env
 channels:
   - defaults
@@ -111,3 +112,15 @@ dependencies:
       - tzdata==2025.2
       - urllib3==2.5.0
       - openai>=1.0.0
+      # API and utilities (from requirements.txt)
+      - fastapi>=0.95.2
+      - uvicorn[standard]>=0.18.3
+      - python-multipart>=0.0.6
+      - python-dotenv>=1.0.0
+      # Additional vector store
+      - pinecone>=3.0.0
+      # Development tools
+      - pytest>=7.0.0
+      - black>=22.0.0
+      - isort>=5.0.0
+      - flake8>=4.0.0

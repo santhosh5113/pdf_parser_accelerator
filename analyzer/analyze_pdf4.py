@@ -1,4 +1,8 @@
 """
+# OpenAI VLM Dependencies for analyze_pdf4.py
+#openai>=1.0.0
+#PyMuPDF>=1.23.0
+#Pillow>=10.0.0 
 OpenAI GPT-4V (Vision) PDF Classification Module
 
 Requirements:
