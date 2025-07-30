@@ -51,24 +51,17 @@ FAISS_CONFIG: Dict[str, Any] = {
 }
 
 
-# Chunk configuration
+# Chunk configuration (character-based)
 CHUNK_CONFIG = {
-    "max_tokens": 512,  # Maximum tokens per chunk
-    "overlap": 50  # Number of overlapping tokens between chunks
+    "max_tokens": 1000,  # Maximum characters per chunk
+    "overlap": 200,      # Number of overlapping characters between chunks
+    "min_tokens": 100    # Minimum characters per chunk
 }
 
-# Pinecone configuration
-PINECONE_CONFIG: Dict[str, Any] = {
-    **COMMON_CONFIG,
-    "type": "pinecone",
-    "api_key": "<YOUR_PINECONE_API_KEY>",
-    "environment": "<YOUR_PINECONE_ENVIRONMENT>",
-    "index_name": "pdf_chunks"
-}
+
 
 # Active configuration (uncomment one of these lines to switch between backends)
-# VECTOR_STORE_CONFIG = CHROMA_CONFIG  # Use ChromaDB backend
+VECTOR_STORE_CONFIG = CHROMA_CONFIG  # Use ChromaDB backend
 # VECTOR_STORE_CONFIG = QDRANT_CONFIG  # Use Qdrant backend
 # VECTOR_STORE_CONFIG = WEAVIATE_CONFIG  # Use Weaviate backend
 # VECTOR_STORE_CONFIG = MILVUS_CONFIG  # Use Milvus backend 
-VECTOR_STORE_CONFIG = PINECONE_CONFIG  # Use Pinecone backend

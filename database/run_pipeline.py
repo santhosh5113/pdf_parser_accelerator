@@ -14,8 +14,7 @@ from config.vector_store_config import (
     QDRANT_CONFIG,
     WEAVIATE_CONFIG,
     MILVUS_CONFIG,
-    FAISS_CONFIG,
-    PINECONE_CONFIG
+    FAISS_CONFIG
 )
 from .vector_store_factory import VectorStoreFactory
 # Do NOT import analyzer.analyze_pdf or text_chunker at the top level
@@ -39,8 +38,7 @@ VECTOR_STORE_CONFIGS = {
     "qdrant": QDRANT_CONFIG,
     "weaviate": WEAVIATE_CONFIG,
     "milvus": MILVUS_CONFIG,
-    "faiss": FAISS_CONFIG,
-    "pinecone": PINECONE_CONFIG
+    "faiss": FAISS_CONFIG
 }
 
 def get_vector_store_config(store_type: str) -> Dict[str, Any]:
@@ -57,7 +55,24 @@ def run_parser(env_name, script, input_pdf, output_json, extra_args=None):
     ]
     if extra_args:
         cmd.extend(extra_args)
-    subprocess.run(cmd)
+    
+    # Capture output to prevent duplicate printing
+    result = subprocess.run(cmd, capture_output=True, text=True)
+    
+    # Print stdout if there's output
+    if result.stdout:
+        print(result.stdout, end='')
+    
+    # Print stderr if there are errors
+    if result.stderr:
+        print(result.stderr, end='')
+    
+    # Check return code
+    if result.returncode != 0:
+        print(f"❌ Parser {script} failed with return code {result.returncode}")
+        return False
+    
+    return True
 
 def manage_docker_services(vector_store: str, action: str = "start") -> bool:
     """Start or stop Docker services for the specified vector store.
@@ -91,11 +106,11 @@ def manage_docker_services(vector_store: str, action: str = "start") -> bool:
         if action == "start":
             # Stop and remove existing containers first
             print(f"🧹 Cleaning up existing {vector_store} services...")
-            subprocess.run(["docker-compose", "down", "-v"], check=False)
+            subprocess.run(["docker-compose", "down", "-v"], check=False, capture_output=True)
             
             # Start services
             print(f"🐳 Starting {vector_store} services...")
-            subprocess.run(["docker-compose", "up", "-d", "--force-recreate", "--remove-orphans"], check=True)
+            subprocess.run(["docker-compose", "up", "-d", "--force-recreate", "--remove-orphans"], check=True, capture_output=True)
             
             # Wait for services to be ready
             time.sleep(15)  # Increased wait time for services to initialize
@@ -116,21 +131,29 @@ def manage_docker_services(vector_store: str, action: str = "start") -> bool:
         return False
 
 def main():
+    # ===== QUICK SWITCHING: Change default analyzer here =====
+    # Uncomment the analyzer you want to use as default:
+    DEFAULT_ANALYZER = "openai_vlm"  # OpenAI VLM (requires API key)
+    #DEFAULT_ANALYZER = "ollama"     # Ollama (local, no API key needed)
+    # DEFAULT_ANALYZER = "clip"       # CLIP (local, no API key needed)
+    
     parser = argparse.ArgumentParser(description="PDF Processing Pipeline")
     parser.add_argument("input_pdf", help="Path to input PDF file")
     parser.add_argument("output_json", help="Path for output JSON file")
     parser.add_argument("--vector-store", choices=list(VECTOR_STORE_CONFIGS.keys()), default="milvus")
     parser.add_argument("--store-only", action="store_true", help="Only run the storage step (for internal use)")
-    parser.add_argument("--chunk-size", type=int, default=512, help="Chunk size (number of tokens per chunk)")
-    parser.add_argument("--chunk-overlap", type=int, default=64, help="Chunk overlap (number of tokens)")
-    parser.add_argument("--chunk-strategy", choices=["hybrid", "recursive", "tokenizer"], default="hybrid", help="Chunking strategy to use")
+
+    parser.add_argument("--analyzer", choices=["ollama", "clip", "openai_vlm"], default=DEFAULT_ANALYZER, help="PDF analyzer to use")
+    parser.add_argument("--openai-model", type=str, default="gpt-4o", help="OpenAI model for VLM analysis")
+    
+
     args = parser.parse_args()
 
     # Handle store-only mode FIRST
     if args.store_only:
         from .text_chunker import process_pdf_json
         config = get_vector_store_config(args.vector_store)
-        success = process_pdf_json(args.output_json, os.path.basename(args.input_pdf), config, args.chunk_size, args.chunk_overlap)
+        success = process_pdf_json(args.output_json, os.path.basename(args.input_pdf), config)
         if success:
             print(f"✅ Successfully stored in {args.vector_store} vector database")
         else:
@@ -146,39 +169,65 @@ def main():
     }
     current_env = os.environ.get("CONDA_DEFAULT_ENV")
     required_env = env_map.get(args.vector_store, None)
-    print("[DEBUG] Current CONDA_DEFAULT_ENV:", current_env)
-    print("[DEBUG] sys.executable:", sys.executable)
-    print("[DEBUG] Selected vector store:", args.vector_store)
-    print("[DEBUG] Required environment for this vector store:", required_env)
-    if required_env:
-        if current_env == required_env:
-            print(f"[DEBUG] ✅ Correct environment '{required_env}' is already activated.")
-        else:
-            print(f"[DEBUG] ❌ Current environment ('{current_env}') does not match required ('{required_env}'). Will attempt to switch.")
-    else:
-        print("[DEBUG] No specific environment required for this vector store.")
 
     # PHASE 1: Analysis and parsing (in pipeline_env)
-    from analyzer.analyze_pdf2 import analyze_pdf_with_ollama as analyze_pdf
-    category = analyze_pdf(args.input_pdf)
-    print(f"📊 Detected category: {category}")
+    
+    # ===== OPENAI VLM ANALYZER =====
+    if args.analyzer == "openai_vlm":
+        from analyzer.analyze_pdf4 import classify_pdf_with_openai_vlm
+        results = classify_pdf_with_openai_vlm(args.input_pdf, model=args.openai_model, save_results=False)
+        if "error" not in results:
+            category = results["overall_classification"]
+            print(f"📊 Detected category (OpenAI VLM): {category}")
+        else:
+            print(f"❌ OpenAI VLM analysis failed: {results['error']}")
+            return
+    
+    # ===== OLLAMA ANALYZER =====
+    elif args.analyzer == "ollama":
+        from analyzer.analyze_pdf2 import analyze_pdf_with_ollama as analyze_pdf
+        category = analyze_pdf(args.input_pdf)
+        print(f"📊 Detected category (Ollama): {category}")
+    
+    # ===== CLIP ANALYZER =====
+    elif args.analyzer == "clip":
+        from analyzer.analyze_pdf3 import classify_pdf_pages
+        # Note: CLIP returns per-page results, need to aggregate
+        results = classify_pdf_pages(args.input_pdf, device="cpu")
+        if results:
+            # Aggregate page results to get overall category
+            from collections import Counter
+            classifications = [r["prediction"] for r in results]
+            category_counts = Counter(classifications)
+            category = category_counts.most_common(1)[0][0]
+            print(f"📊 Detected category (CLIP): {category}")
+        else:
+            print("❌ CLIP analysis failed")
+            return
 
     # Route to appropriate parser (still in pipeline_env)
     category = category.replace(" ", "_").lower()
+    parser_success = False
+    
     if category == "native_text":
-        run_parser("pdfminer_env", "pdfminer_parser.py", args.input_pdf, args.output_json)
+        parser_success = run_parser("mupdf_env", "mupdf_parser.py", args.input_pdf, args.output_json)
     elif category == "native_table":
-        run_parser("docling_env", "docling_parser.py", args.input_pdf, args.output_json)
+        parser_success = run_parser("docling_env", "docling_parser.py", args.input_pdf, args.output_json)
     elif category == "native_math_heavy":
-        run_parser("landingai_env", "landingai_parser.py", args.input_pdf, args.output_json)
+        parser_success = run_parser("landingai_env", "landingai_parser.py", args.input_pdf, args.output_json)
     elif category == "scanned_math_heavy":
-        run_parser("landingai_env", "landingai_parser.py", args.input_pdf, args.output_json)
+        parser_success = run_parser("landingai_env", "landingai_parser.py", args.input_pdf, args.output_json)
     elif category == "scanned_text":
-        run_parser("llama_parse_env", "llama_parser.py", args.input_pdf, args.output_json)
+        parser_success = run_parser("llama_parse_env", "llama_parser.py", args.input_pdf, args.output_json)
     elif category == "scanned_table":
-        run_parser("llama_parse_env", "llama_parser.py", args.input_pdf, args.output_json)
+        parser_success = run_parser("llama_parse_env", "llama_parser.py", args.input_pdf, args.output_json)
     else:
-        print("❌ Unable to determine suitable parser for this PDF.")
+        print(f"❌ Unable to determine suitable parser for category: '{category}'")
+        print(f"   Available categories: native_text, native_table, native_math_heavy, scanned_math_heavy, scanned_text, scanned_table")
+        return
+    
+    if not parser_success:
+        print(f"❌ Parser failed for category: {category}")
         return
 
     # PHASE 2: Switch to vector DB environment for storage
@@ -189,20 +238,34 @@ def main():
             args.input_pdf,
             args.output_json,
             "--vector-store", args.vector_store,
-            "--chunk-size", str(args.chunk_size),
-            "--chunk-overlap", str(args.chunk_overlap),
-            "--chunk-strategy", args.chunk_strategy,
             "--store-only"
         ]
+        
+
         env = os.environ.copy()
         env["PYTHONPATH"] = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        subprocess.run(cmd, env=env)
+        
+        # Capture output to prevent duplicate printing
+        result = subprocess.run(cmd, env=env, capture_output=True, text=True)
+        
+        # Print stdout if there's output
+        if result.stdout:
+            print(result.stdout, end='')
+        
+        # Print stderr if there are errors
+        if result.stderr:
+            print(result.stderr, end='')
+        
+        # Check return code
+        if result.returncode != 0:
+            print(f"❌ Storage step failed with return code {result.returncode}")
+        
         return  # Ensure parent process exits after switching environments
 
     # If already in the correct environment, run storage step directly
     from .text_chunker import process_pdf_json
     config = get_vector_store_config(args.vector_store)
-    success = process_pdf_json(args.output_json, os.path.basename(args.input_pdf), config, args.chunk_size, args.chunk_overlap)
+    success = process_pdf_json(args.output_json, os.path.basename(args.input_pdf), config)
     if success:
         print(f"✅ Successfully stored in {args.vector_store} vector database")
     else:

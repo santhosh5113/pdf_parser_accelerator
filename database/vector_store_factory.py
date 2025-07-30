@@ -12,7 +12,7 @@ class VectorStoreFactory:
         
         Args:
             config: Configuration dictionary with:
-                - type: Type of vector store (chroma, qdrant, weaviate, milvus, faiss, pinecone)
+                - type: Type of vector store (chroma, qdrant, weaviate, milvus, faiss)
                 - Other type-specific configuration
                 
         Returns:
@@ -42,9 +42,7 @@ class VectorStoreFactory:
         elif store_type == "faiss":
             from .vector_store_faiss import FaissVectorStore
             return FaissVectorStore(**config)
-        elif store_type == "pinecone":
-            from .vector_store_pinecone import PineconeVectorStore
-            return PineconeVectorStore(**config)
+        
             
         else:
             raise ValueError(f"Unknown vector store type: {store_type}") 

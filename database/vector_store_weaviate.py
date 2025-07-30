@@ -140,20 +140,27 @@ class WeaviateVectorStore(VectorStoreBase):
     def get_all_chunks(self) -> List[Dict[str, Any]]:
         """Get all chunks from the collection."""
         try:
-            result = (
-                self.client.query
-                .get(self.collection_name, ["text", "source", "metadata_json"])
-                .do()
+            # Use the new Weaviate v4+ API
+            results = self.collection.query.fetch_objects(
+                limit=10000,  # Adjust limit as needed
+                return_properties=["text", "source", "metadata_json"]
             )
-            hits = result["data"]["Get"][self.collection_name]
-            return [
-                {
-                    "text": hit["text"],
-                    "metadata": json.loads(hit["metadata_json"]),
-                    "source": hit["source"]
-                }
-                for hit in hits
-            ]
+            
+            chunks = []
+            for obj in results.objects:
+                try:
+                    meta = json.loads(obj.properties["metadata_json"])
+                except (json.JSONDecodeError, KeyError):
+                    meta = {}
+                
+                chunks.append({
+                    "id": obj.uuid,
+                    "text": obj.properties.get("text", ""),
+                    "metadata": meta,
+                    "source": obj.properties.get("source", "unknown")
+                })
+            
+            return chunks
         except Exception as e:
             print(f"Error getting chunks from Weaviate: {str(e)}")
             return []

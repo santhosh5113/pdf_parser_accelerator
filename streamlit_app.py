@@ -50,6 +50,26 @@ st.markdown("""
         transition: box-shadow 0.2s, border 0.2s, transform 0.2s;
         cursor: pointer;
     }
+    .config-card-dark {
+        background: #181C24;
+        border-radius: 14px;
+        border: 2px solid #21cbf3;
+        box-shadow: 0 4px 24px rgba(33,203,243,0.10);
+        padding: 1.5rem 1rem 1.5rem 1rem;
+        margin-bottom: 1.2rem;
+        text-align: center;
+        min-width: 260px;
+        max-width: 260px;
+        min-height: 250px;
+        max-height: 250px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: box-shadow 0.2s, border 0.2s, transform 0.2s;
+        cursor: pointer;
+        overflow: hidden;
+    }
     .vector-card-dark:hover, .vector-card-dark:focus {
         box-shadow: 0 8px 32px rgba(33,203,243,0.22);
         border: 2px solid #1976d2;
@@ -137,40 +157,35 @@ if selected_json != "(None)":
 else:
     st.info("Select a JSON file above to view its parsed output.")
 
-# ==== CHUNKING OPTIONS + EMBEDDING CARD (COMBINED ROW) ====
-st.markdown("<div class='section-title'>✂️ Chunking & Embedding</div>", unsafe_allow_html=True)
-chunk_embed_cols = st.columns([1, 1, 0.5])
+# ==== EMBEDDING & CHUNKING CARDS ====
+st.markdown("<div class='section-title'>🧬 Configuration</div>", unsafe_allow_html=True)
 
-with chunk_embed_cols[0]:
-    st.markdown("""
-    <div style='display:flex; flex-direction:column; justify-content:center; height:100%;'>
-        <div style='font-size:1.05em; color:#21cbf3; font-weight:600; margin-bottom:0.2em;'>Chunk Size</div>
-    </div>
-    """, unsafe_allow_html=True)
-    chunk_size = st.selectbox(" ", [256, 512, 1024, 2048], index=1,
-        help="Number of tokens per chunk", format_func=lambda x: f"{x} tokens", key="chunk_size_sb")
+# Create centered configuration cards using Streamlit columns
+config_cols = st.columns([1, 1])
 
-with chunk_embed_cols[1]:
+with config_cols[0]:
     st.markdown("""
-    <div style='display:flex; flex-direction:column; justify-content:center; height:100%;'>
-        <div style='font-size:1.05em; color:#21cbf3; font-weight:600; margin-bottom:0.2em;'>Chunk Overlap</div>
-    </div>
-    """, unsafe_allow_html=True)
-    chunk_overlap = st.selectbox("  ", [0, 32, 64, 128], index=1,
-        help="Overlap between chunks", format_func=lambda x: f"{x} tokens", key="chunk_overlap_sb")
-
-with chunk_embed_cols[2]:
-    st.markdown("""
-    <div class='vector-card-dark' style='min-width:200px; max-width:220px; min-height:140px; max-height:140px; padding:0.7em 0.5em; display:flex; flex-direction:column; justify-content:center; align-items:center;'>
-        <div style='font-size:1.5rem; color:#21cbf3; margin-bottom:0.1em; text-shadow:0 2px 8px #111;'>🧬</div>
-        <div style='font-weight:800; font-size:1em; margin-bottom:0.05em; color:#fff;'>Embeddings</div>
-        <div style='font-size:0.85em; color:#e0e0e0; margin-bottom:0.03em; text-align:center;'>Model: <code>BAAI/bge-base-en-v1.5</code></div>
-        <div style='font-size:0.8em; color:#90caf9; text-align:center;'>Library: <code>sentence-transformers</code></div>
+    <div style='display: flex; justify-content: center;'>
+        <div class='config-card-dark'>
+            <div style='font-size:1.8rem; color:#21cbf3; margin-bottom:0.12em; text-shadow:0 2px 8px #111; text-align:center;'>✂️</div>
+            <div style='font-weight:900; font-size:1.1em; color:#fff; margin-bottom:0.06em; text-align:center;'>Chunking Strategy</div>
+            <div style='font-size:0.9em; color:#e0e0e0; margin-bottom:0.03em; text-align:center;'>Strategy: <code>Hybrid Chunking</code></div>
+            <div style='font-size:0.85em; color:#90caf9; text-align:center;'>Features: <code>Table Aware + Paragraph</code></div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-st.session_state['chunk_size'] = chunk_size
-st.session_state['chunk_overlap'] = chunk_overlap
+with config_cols[1]:
+    st.markdown("""
+    <div style='display: flex; justify-content: center;'>
+        <div class='config-card-dark'>
+            <div style='font-size:1.8rem; color:#21cbf3; margin-bottom:0.12em; text-shadow:0 2px 8px #111; text-align:center;'>🧬</div>
+            <div style='font-weight:900; font-size:1.1em; color:#fff; margin-bottom:0.06em; text-align:center;'>Embeddings</div>
+            <div style='font-size:0.9em; color:#e0e0e0; margin-bottom:0.08em; text-align:center;'>Model: <code>BAAI/bge-base-en-v1.5</code></div>
+            <div style='font-size:0.85em; color:#90caf9; text-align:center;'>Library: <code>sentence-transformers</code></div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # ==== VECTOR DB CARDS ====
 st.markdown("<div class='section-title'>🧠 Choose a Vector Database</div>", unsafe_allow_html=True)
@@ -193,28 +208,39 @@ for i, card in enumerate(VECTOR_DB_CARDS):
         </div>
         """, unsafe_allow_html=True)
 
-# Use the lowercase backend name for the pipeline
-vector_store_display_names = [c['name'].capitalize() for c in VECTOR_DB_CARDS]
-vector_store_idx = 0
-if 'vector_store' in st.session_state:
-    try:
-        vector_store_idx = vector_store_display_names.index(st.session_state['vector_store'])
-    except Exception:
-        vector_store_idx = 0
-vector_store_display = st.selectbox("Select Vector Store Backend", vector_store_display_names, index=vector_store_idx)
-vector_store = next(c['name'] for c in VECTOR_DB_CARDS if c['name'].capitalize() == vector_store_display)
-st.session_state['vector_store'] = vector_store
-
-# ==== PARSE BUTTON ====
+# ==== VECTOR DB SELECTION & PARSE BUTTON ====
 st.markdown("<div style='display:flex; justify-content:center; margin-top:2em; margin-bottom:2em;'>", unsafe_allow_html=True)
 if 'pipeline_running' not in st.session_state:
     st.session_state['pipeline_running'] = False
-run_button = st.button("Parse PDF", disabled=st.session_state['pipeline_running'])
+
+# Create two columns for vector db selection and parse button
+col1, col2 = st.columns([2, 1])
+
+with col1:
+    # Use the lowercase backend name for the pipeline
+    vector_store_display_names = [c['name'].capitalize() for c in VECTOR_DB_CARDS]
+    vector_store_idx = 0
+    if 'vector_store' in st.session_state:
+        try:
+            vector_store_idx = vector_store_display_names.index(st.session_state['vector_store'])
+        except Exception:
+            vector_store_idx = 0
+    vector_store_display = st.selectbox("Vector Store", vector_store_display_names, index=vector_store_idx)
+    vector_store = next(c['name'] for c in VECTOR_DB_CARDS if c['name'].capitalize() == vector_store_display)
+    st.session_state['vector_store'] = vector_store
+
+with col2:
+    # Parse button
+    run_button = st.button("🚀 Parse", type="primary", disabled=st.session_state['pipeline_running'])
+
 st.markdown("</div>", unsafe_allow_html=True)
 
 # ==== PARSING PIPELINE ====
 if uploaded_file and run_button and not st.session_state['pipeline_running']:
+    # Set a flag to prevent re-execution
+    st.session_state['pipeline_executed'] = True
     st.session_state['pipeline_running'] = True
+    
     with st.spinner("Running parsing pipeline... Please wait."):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_pdf:
             tmp_pdf.write(uploaded_file.read())
@@ -226,9 +252,7 @@ if uploaded_file and run_button and not st.session_state['pipeline_running']:
     cmd = [
         "python", "-m", "database.run_pipeline",
             tmp_pdf_path, output_json,
-            "--vector-store", vector_store,
-            "--chunk-size", str(chunk_size),
-            "--chunk-overlap", str(chunk_overlap)
+            "--vector-store", vector_store
     ]
 
     st.write("⏳ Parsing in progress...")
@@ -236,50 +260,56 @@ if uploaded_file and run_button and not st.session_state['pipeline_running']:
     output_container = st.empty()
     env = os.environ.copy()
     env["PYTHONUNBUFFERED"] = "1"
-    with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, env=env) as proc:
-        for line in proc.stdout:
-            output_lines.append(line.rstrip())
-            output_container.text('\n'.join(output_lines))
-        proc.wait()
+    
+    try:
+        with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1, env=env) as proc:
+            for line in proc.stdout:
+                output_lines.append(line.rstrip())
+                output_container.text('\n'.join(output_lines))
+            proc.wait()
 
-    if proc.returncode != 0:
-        st.error("Pipeline failed. See output above for details.")
-
-    st.session_state['pipeline_running'] = False
-
-    phase1_lines, phase2_lines = [], []
-    phase = 1
-    for line in output_lines:
-        if "[DEBUG] Current CONDA_DEFAULT_ENV:" in line and "vector store" in line:
-            phase = 2
-        (phase1_lines if phase == 1 else phase2_lines).append(line)
-
-    st.success("✅ PDF Parsed Successfully!")
-    st.subheader("📊 Phase 1: Parsing Output")
-    st.text("\n".join(phase1_lines))
-    st.subheader("🗃️ Phase 2: Vector Storage")
-    st.text("\n".join(phase2_lines))
-
-    if os.path.exists(output_json):
-        with open(output_json, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        st.markdown("## 🆕 Latest Parsed Output")
-        # Add a download button for the latest output JSON
-        with open(output_json, "rb") as f_download:
-            st.download_button(
-                label="⬇️ Download latest output JSON",
-                data=f_download,
-                file_name=os.path.basename(output_json),
-                mime="application/json"
-            )
-        st.markdown("### 📦 Extracted Data Preview (latest parse)")
-        if isinstance(data, dict):
-            st.write("Output JSON keys:", list(data.keys()))
-        elif isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
-            st.write("Output is a list of dicts. Keys of first element:", list(data[0].keys()))
+        if proc.returncode != 0:
+            st.error("Pipeline failed. See output above for details.")
+            st.session_state['last_success'] = False
         else:
-            st.write("Output is a list or another type:", type(data))
-        if isinstance(data, dict) and "text" in data:
-            st.code(data["text"][:500], language="markdown")
+            # Store results in session state
+            st.session_state['last_output_lines'] = output_lines
+            st.session_state['last_output_json'] = output_json
+            st.session_state['last_success'] = True
+            
+            # Display results immediately after successful execution
+            st.success("✅ PDF Parsed Successfully!")
+            
+            if os.path.exists(output_json):
+                with open(output_json, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                st.markdown("## 🆕 Latest Parsed Output")
+                # Add a download button for the latest output JSON
+                with open(output_json, "rb") as f_download:
+                    st.download_button(
+                        label="⬇️ Download latest output JSON",
+                        data=f_download,
+                        file_name=os.path.basename(output_json),
+                        mime="application/json"
+                    )
+                st.markdown("### 📦 Extracted Data Preview (latest parse)")
+                if isinstance(data, dict):
+                    st.write("Output JSON keys:", list(data.keys()))
+                elif isinstance(data, list) and len(data) > 0 and isinstance(data[0], dict):
+                    st.write("Output is a list of dicts. Keys of first element:", list(data[0].keys()))
+                else:
+                    st.write("Output is a list or another type:", type(data))
+                if isinstance(data, dict) and "text" in data:
+                    st.code(data["text"][:500], language="markdown")
+            
+    except Exception as e:
+        st.error(f"Pipeline error: {str(e)}")
+        st.session_state['last_success'] = False
+    
+    finally:
+        st.session_state['pipeline_running'] = False
+        # Clean up temporary file
+        if os.path.exists(tmp_pdf_path):
+            os.remove(tmp_pdf_path)
 
-    os.remove(tmp_pdf_path)
+

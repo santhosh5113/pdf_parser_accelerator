@@ -116,42 +116,45 @@ def build_llm_prompt(is_native, camelot_table_found, equation_found):
         "If a table or equation is detected, you should strongly consider classifying as 'Native Table' or 'Native Math Heavy' as appropriate, unless the image clearly contradicts this. "
     )
     detection_block = '\n'.join(detection_lines)
-   
+    
     prompt = """
-You are a document classification expert.
+    You are a document classification expert.
 
-You will receive a PDF page as an image and classify it strictly into one of the following six categories:
+    You will receive a PDF page as an image and classify it strictly into one of the following six categories:
 
-- Native Text
-- Native Table
-- Native Math Heavy
-- Scanned Text
-- Scanned Table
-- Scanned Math Heavy
+    - Native Text
+    - Native Table
+    - Native Math Heavy
+    - Scanned Text
+    - Scanned Table
+    - Scanned Math Heavy
 
----
+    ---
 
-Step 1: Determine format:
-- Native: Clean, digital, selectable
-- Scanned: Image-based, low-res or photo
+    Step 1: Determine format:
+    - Native: Clean, digital, selectable
+    - Scanned: Image-based, low-res or photo
 
-Step 2: Determine content type:
-- Table: Visibly structured rows/columns (headers + data)
-- Math Heavy: Equations, variables, math symbols
-- Text: Paragraphs with no table layout or formulas
+    Step 2: Determine content type:
+    - Table: Visibly structured rows/columns (headers + data)
+    - Math Heavy: Equations, variables, math symbols
+    - Text: Paragraphs with no table layout or formulas
 
-❗ RULE: Even if the page contains numbers, only classify it as a Table or Math-heavy if the layout clearly shows table structure or math notation.
+    ❗ RULE: Even if the page contains numbers, only classify it as a Table or Math-heavy if the layout clearly shows table structure or math notation.
 
----
+    ---
 
-⚠️ REQUIRED: Always return a classification, never leave it blank.
+    ⚠️ REQUIRED: Always return a classification, never leave it blank.
 
-Output:
----
-Page Classification: <exact one of the 6 categories>
-Reason: <1–2 sentence explanation using visual structure and content>
----
-"""
+    Output:
+    ---
+    Page Classification: <exact one of the 6 categories>
+    Reason: <1–2 sentence explanation using visual structure and content>
+    ---
+    """
+
+
+   
     return prompt
 
 def analyze_pdf_with_ollama(pdf_path: str) -> str:
@@ -175,7 +178,7 @@ def analyze_pdf_with_ollama(pdf_path: str) -> str:
         llm_prompt = build_llm_prompt(is_native, camelot_table_found, equation_found)
 
         # Call LLM
-        result = analyze_image_with_ollama(img_path, llm_prompt, model="gemma3:12b")
+        result = analyze_image_with_ollama(img_path, llm_prompt, model="gemma3:12b-it-qat")
         label = extract_category(result)
         page_types.append(label)
         print(f"Page {i+1}: {label} (raw: {result})")
