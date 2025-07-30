@@ -1,253 +1,333 @@
-Read file: README.md
-Here is a full, professional draft README for your project, incorporating all the details and structure we discussed. You can copy this into your `README.md` and adjust as needed.
-
----
-
 # PDF Parser & Vector Store Pipeline
 
 A powerful, extensible pipeline for parsing PDFs, extracting structured content (including tables), chunking text and tables, and storing the results in a variety of vector databases for downstream applications such as semantic search, retrieval-augmented generation, and document analysis.
 
----
+## 🚀 Quick Start
 
-## Features
+### System Requirements
 
-- **Multi-parser support:** Handles native, scanned, math-heavy, and complex PDFs using specialized parsers.
-- **Advanced table and text extraction:** Preserves structure and formatting.
-- **Flexible chunking:** Recursive, hybrid, and tokenizer-based strategies.
-- **Vector database integration:** Supports FAISS, Milvus, Chroma, Pinecone, Qdrant, Weaviate.
-- **Environment management:** Seamless switching between parser and vector DB dependencies.
-- **Streamlit UI:** Interactive web interface for uploading, parsing, and exploring PDFs.
-- **Dockerized vector DBs:** Easy local or cloud deployment.
+- **Operating System**: macOS, Linux, or Windows (WSL2 recommended for Windows)
+- **Python**: 3.10 or higher
+- **Conda**: Miniconda or Anaconda
+- **Docker**: For vector database services (optional)
+- **Git**: For cloning the repository
+- **Memory**: At least 8GB RAM (16GB recommended)
+- **Storage**: At least 10GB free space
 
----
+### Step 1: Clone the Repository
 
-## Table of Contents
+```bash
+git clone https://github.com/santhosh5113/pdf_parser_accelerator.git
+cd pdf_parser_accelerator
+```
 
-1. [Project Overview](#project-overview)
-2. [Directory Structure](#directory-structure)
-3. [Core Components](#core-components)
-   - [Parsers](#parsers-parsers)
-   - [Chunking](#chunking-databasetext_chunkerpy)
-   - [Vector Store Integration](#vector-store-integration-database)
-   - [Pipeline](#pipeline-databaserun_pipelinepy)
-   - [Configuration](#configuration-config)
-   - [Analyzer](#analyzer-analyzer)
-   - [Streamlit App](#streamlit-app-streamlit_apppy)
-4. [Docker & Environment Management](#docker--environment-management)
-5. [Data & Shared Resources](#data--shared-resources)
-6. [Extending the Project](#extending-the-project)
-7. [Testing & Validation](#testing--validation)
-8. [Troubleshooting & FAQ](#troubleshooting--faq)
-9. [References & Credits](#references--credits)
+### Step 2: Install Conda (if not already installed)
 
----
+**macOS/Linux:**
+```bash
+# Download Miniconda
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
 
-## Project Overview
+# Or using Homebrew on macOS
+brew install --cask miniconda
+```
 
-This project provides a robust, extensible pipeline for parsing PDFs, extracting structured content (including tables), chunking text and tables, and storing the results in a variety of vector databases for downstream applications such as semantic search, retrieval-augmented generation, and document analysis.
+**Windows:**
+```bash
+# Download from https://docs.conda.io/en/latest/miniconda.html
+# Or using Chocolatey
+choco install miniconda3
+```
 
----
+### Step 3: Create and Activate the Main Environment
 
-## Directory Structure
+```bash
+# Create the main pipeline environment
+conda env create -f envs/pipeline_env.yml
+
+# Activate the environment
+conda activate pipeline_env
+```
+
+### Step 4: Install Vector Store Environments (Optional)
+
+Choose which vector stores you want to use:
+
+```bash
+# For ChromaDB (recommended for beginners)
+conda env create -f database/chroma_env/environment.yml
+
+# For FAISS (lightweight, local)
+conda env create -f database/faiss_env/environment.yml
+
+# For Qdrant (cloud-ready)
+conda env create -f database/qdrant_env/environment.yml
+
+# For Weaviate (enterprise-ready)
+conda env create -f database/weaviate_env/environment.yml
+
+# For Milvus (high-performance)
+conda env create -f database/milvus_env/milvus_env.yml
+```
+
+### Step 5: Install Parser Environments (Optional)
+
+Install environments for the parsers you plan to use:
+
+```bash
+# For Docling parser (tables)
+conda env create -f parsers/docling_env/environment.yml
+
+# For LandingAI parser (math-heavy documents)
+conda env create -f parsers/landingai_env/environment.yml
+
+# For PDFPlumber parser (simple text extraction)
+conda env create -f parsers/pdfplumber_env/environment.yml
+
+# For PyMuPDF parser (native PDFs)
+conda env create -f parsers/mupdf_env/environment.yml
+```
+
+### Step 6: Set Up API Keys (Optional)
+
+For cloud-based services, set your API keys:
+
+```bash
+# OpenAI API (for VLM analyzer)
+export OPENAI_API_KEY='your-openai-api-key-here'
+
+# Qdrant Cloud (if using Qdrant)
+export QDRANT_API_KEY='your-qdrant-api-key-here'
+
+# Llama Cloud (for LlamaParse)
+export LLAMA_CLOUD_API_KEY='your-llama-cloud-api-key-here'
+
+# LLMWhisperer (for LLMWhisperer parser)
+export LLMWHISPERER_API_KEY='your-llmwhisperer-api-key-here'
+```
+
+### Step 7: Start Vector Database Services (Optional)
+
+**Option A: Using Docker (Recommended)**
+
+```bash
+# For Qdrant
+cd docker/qdrant
+docker-compose up -d
+
+# For Weaviate
+cd docker/weaviate
+docker-compose up -d
+
+# For Milvus
+cd docker/milvus
+docker-compose up -d
+```
+
+**Option B: Using Cloud Services**
+
+- **Qdrant**: Use Qdrant Cloud (free tier available)
+- **Weaviate**: Use Weaviate Cloud Services
+- **ChromaDB**: Runs locally, no setup needed
+- **FAISS**: Runs locally, no setup needed
+
+### Step 8: Run the Application
+
+**Method 1: Streamlit Web Interface (Recommended)**
+
+```bash
+# Make sure you're in the pipeline environment
+conda activate pipeline_env
+
+# Start the Streamlit app
+streamlit run streamlit_app.py
+```
+
+Then open your browser to `http://localhost:8501`
+
+**Method 2: Command Line Interface**
+
+```bash
+# Make sure you're in the pipeline environment
+conda activate pipeline_env
+
+# Process a single PDF
+python -m database.run_pipeline path/to/your/document.pdf output.json --vector-store chroma
+```
+
+## 📁 Project Structure
 
 ```
 pdf_parser_project/
-│
-├── analyzer/                # PDF type/category detection logic
-├── chroma_db/               # Chroma vector DB data (if used)
-├── config/                  # Configuration files for chunking, vector stores, etc.
-├── database/                # Chunking, vector store integration, pipeline logic
-├── docker/                  # Docker configs for vector DBs
-├── faiss_index/             # FAISS index data (if used)
-├── LLaVA/                   # LLaVA model and related scripts/docs
-├── nougat/                  # (Reserved for Nougat parser/model)
-├── parsers/                 # All PDF parsers (Docling, Llama, LandingAI, etc.)
-├── prompt_images/           # Images used for prompt examples
-├── shared/                  # Input PDFs, output JSONs, and shared resources
-├── small_dataset/           # Sample PDFs for testing
-├── streamlit_app.py         # Streamlit UI for the pipeline
-├── switch_vector_store.sh   # Script to switch vector DB environments
-├── view_all_vector_db_chunks.py # Utility to view stored chunks
-├── requirements.txt         # Python dependencies
-└── README.md                # Project documentation (this file)
+├── analyzer/           # PDF analyzers (OpenAI VLM, Ollama, CLIP)
+├── config/            # Vector store configurations
+├── database/          # Vector store implementations and pipeline
+├── docker/            # Docker configurations for vector stores
+├── envs/              # Conda environment files
+├── parsers/           # PDF parsers (Docling, LandingAI, etc.)
+├── shared/            # Input/output folders
+│   ├── input_pdfs/    # Upload your PDFs here
+│   └── output_json/   # Processed results
+├── streamlit_app.py   # Web interface
+└── README.md          # This file
 ```
 
----
+## 🔧 Configuration
 
-## Core Components
+### Vector Store Selection
 
-### Parsers (`parsers/`)
+Edit `config/vector_store_config.py` to switch between vector stores:
 
-- **Purpose:**  
-  Each parser is designed to handle a specific type of PDF or extraction task.
-  - `llama_parser.py`: Uses LlamaParse for scanned or complex PDFs.
-  - `docling_parser.py`: Uses Docling for native tables and structured content.
-  - `landingai_parser.py`: Uses LandingAI for math-heavy or visually complex PDFs.
-  - Many other parsers for OCR, layout, and specialized extraction.
+```python
+# Uncomment the vector store you want to use:
+VECTOR_STORE_CONFIG = CHROMA_CONFIG  # Use ChromaDB
+# VECTOR_STORE_CONFIG = QDRANT_CONFIG  # Use Qdrant
+# VECTOR_STORE_CONFIG = WEAVIATE_CONFIG  # Use Weaviate
+# VECTOR_STORE_CONFIG = MILVUS_CONFIG  # Use Milvus
+# VECTOR_STORE_CONFIG = FAISS_CONFIG  # Use FAISS
+```
 
-- **Adding a New Parser:**  
-  1. Create a new parser script in `parsers/`.
-  2. Ensure it outputs JSON in a documented structure.
-  3. Register it in the pipeline logic (`run_pipeline.py`).
+### Analyzer Selection
 
-- **Supported Output Structures:**  
-  - `items` array (Llama, Markitdown, etc.)
-  - `tables` and `texts` arrays (Docling)
-  - `chunk_type` and `captions` (LandingAI)
-  - See each parser’s docstring for details.
+Edit `database/run_pipeline.py` to change the default analyzer:
 
----
+```python
+# Line 135: Change the default analyzer
+DEFAULT_ANALYZER = "openai_vlm"  # OpenAI VLM (requires API key)
+# DEFAULT_ANALYZER = "ollama"     # Ollama (local, no API key needed)
+# DEFAULT_ANALYZER = "clip"       # CLIP (local, no API key needed)
+```
 
-### Chunking (`database/text_chunker.py`)
+## 🎯 Usage Examples
 
-- **Purpose:**  
-  Splits extracted text and tables into manageable chunks for embedding and storage.
+### Example 1: Process a PDF via Web Interface
 
-- **How it Handles Different Parsers:**  
-  - Detects parser output format and extracts tables as single chunks, text as recursively split chunks.
-  - Supports markdown, HTML, CSV, and grid formats for tables.
+1. Start the Streamlit app: `streamlit run streamlit_app.py`
+2. Upload your PDF file
+3. Select a vector store (ChromaDB recommended for beginners)
+4. Click "Parse" and wait for processing
+5. Download the results or explore the vector database
 
-- **Chunking Strategies:**  
-  - **Hybrid:** Keeps tables as single chunks, splits text recursively.
-  - **Recursive:** Splits all content recursively by size/overlap.
-  - **Tokenizer-based:** Uses token count for chunking.
-
----
-
-### Vector Store Integration (`database/`)
-
-- **Supported Vector DBs:**  
-  - FAISS, Milvus, Chroma, Pinecone, Qdrant, Weaviate
-
-- **Switching:**  
-  - Use `switch_vector_store.sh` or pipeline arguments to select backend.
-
-- **Storage:**  
-  - Chunks are stored with metadata (source, chunk type, index, etc.)
-  - Embeddings generated via BGE or other models.
-
----
-
-### Pipeline (`database/run_pipeline.py`)
-
-- **End-to-End Flow:**  
-  1. Detect PDF type (analyzer).
-  2. Route to appropriate parser.
-  3. Parse and extract content.
-  4. Chunk content.
-  5. Store in selected vector DB.
-
-- **Environment Management:**  
-  - Uses conda environments for parser/vector DB dependencies.
-  - Switches environments as needed for each step.
-
----
-
-### Configuration (`config/`)
-
-- **Chunking and Vector Store Config:**  
-  - `vector_store_config.py`: Vector DB settings.
-  - `config.py`: General settings.
-
-- **How to Change:**  
-  - Edit config files or pass arguments to pipeline.
-
----
-
-### Analyzer (`analyzer/`)
-
-- **Purpose:**  
-  Detects PDF type (native, scanned, table, math-heavy, etc.) to select the best parser.
-
----
-
-### Streamlit App (`streamlit_app.py`)
-
-- **Purpose:**  
-  Provides a web UI for uploading PDFs, running the pipeline, and exploring results.
-
-- **Features:**  
-  - Upload and parse PDFs
-  - View extracted tables and text
-  - Search and visualize vector DB contents
-
----
-
-## Docker & Environment Management
-
-- **Docker:**  
-  - Each vector DB has a Docker Compose setup in `docker/`.
-  - Run with `docker-compose up` in the respective directory.
-
-- **Conda Environments:**  
-  - Each parser and vector DB may require a separate conda environment.
-  - Use `switch_vector_store.sh` to activate the correct environment.
-
----
-
-## Data & Shared Resources
-
-- **Input PDFs:**  
-  - Place in `shared/input_pdfs/`
-- **Output JSONs:**  
-  - Written to `shared/output_json/`
-- **Sample Data:**  
-  - `small_dataset/` contains example PDFs for testing.
-
----
-
-## Extending the Project
-
-- **Add a Parser:**  
-  - See section on Parsers above.
-- **Add a Vector Store:**  
-  - Implement a new class in `database/` following the `VectorStoreBase` interface.
-- **Add a Chunking Strategy:**  
-  - Extend `text_chunker.py` with a new chunking function.
-
----
-
-## Testing & Validation
-
-- **Test Scripts:**  
-  - `test_recrussive_split.py` for chunking
-  - Manual and automated tests for parsing and storage
-
----
-
-## Troubleshooting & FAQ
-
-- **Common Issues:**  
-  - Environment not activated: Use the correct conda env.
-  - Parser errors: Check parser logs and dependencies.
-  - Vector DB connection: Ensure Docker containers are running.
-
----
-
-## References & Credits
-
-- **Libraries:**  
-  - LangChain, HuggingFace Transformers, FAISS, Milvus, Chroma, Pinecone, Qdrant, Weaviate, Streamlit, etc.
-- **Models:**  
-  - BGE, LLaVA, Docling, LlamaParse, LandingAI, etc.
-
----
-
-## Installation
-
-Clone this repository:
+### Example 2: Process Multiple PDFs via Command Line
 
 ```bash
-git clone https://github.com/yourusername/pdf-parser-accelerator.git
-cd pdf-parser-accelerator
-pip install -r requirements.txt
+# Process a single PDF
+python -m database.run_pipeline documents/report.pdf output.json --vector-store chroma
+
+# Process with specific analyzer
+python -m database.run_pipeline documents/report.pdf output.json --vector-store chroma --analyzer ollama
+
+# Process with OpenAI VLM (requires API key)
+python -m database.run_pipeline documents/report.pdf output.json --vector-store chroma --analyzer openai_vlm
 ```
 
----
+### Example 3: Search Vector Database
 
-## Usage
+```bash
+# View all stored chunks
+python view_all_vector_db_chunks.py
 
-1. Place your PDFs in `shared/input_pdfs/`.
-2. Run the pipeline via CLI or Streamlit app.
-3. Explore results in the vector DB or via the UI.
+# Clear all vector databases
+python clear_all_vector_dbs.py
+```
+
+## 🔍 Features
+
+- **Multi-parser support**: Handles native, scanned, math-heavy, and complex PDFs
+- **Advanced table and text extraction**: Preserves structure and formatting
+- **Flexible chunking**: Recursive, hybrid, and tokenizer-based strategies
+- **Vector database integration**: Supports FAISS, Milvus, Chroma, Pinecone, Qdrant, Weaviate
+- **Environment management**: Seamless switching between parser and vector DB dependencies
+- **Streamlit UI**: Interactive web interface for uploading, parsing, and exploring PDFs
+- **Dockerized vector DBs**: Easy local or cloud deployment
+
+## 🛠️ Troubleshooting
+
+### Common Issues
+
+**1. "Module not found" errors**
+```bash
+# Make sure you're in the correct environment
+conda activate pipeline_env
+
+# Reinstall the environment if needed
+conda env remove -n pipeline_env
+conda env create -f envs/pipeline_env.yml
+```
+
+**2. "API key not set" errors**
+```bash
+# Set your OpenAI API key
+export OPENAI_API_KEY='your-api-key-here'
+```
+
+**3. Docker services not starting**
+```bash
+# Check if Docker is running
+docker --version
+
+# Start Docker services
+cd docker/qdrant
+docker-compose up -d
+```
+
+**4. Memory issues**
+- Close other applications
+- Use FAISS or ChromaDB instead of Milvus
+- Process smaller PDFs
+
+### Getting Help
+
+1. Check the logs in the terminal
+2. Verify all environments are created correctly
+3. Ensure API keys are set (if using cloud services)
+4. Check Docker services are running (if using Docker)
+
+## 📚 Advanced Usage
+
+### Custom Parsers
+
+To add a new parser:
+
+1. Create a new file in `parsers/`
+2. Follow the existing parser structure
+3. Add environment configuration if needed
+4. Register in `database/run_pipeline.py`
+
+### Custom Vector Stores
+
+To add a new vector store:
+
+1. Create implementation in `database/`
+2. Add configuration in `config/vector_store_config.py`
+3. Register in `database/vector_store_factory.py`
+
+### Batch Processing
+
+```bash
+# Process multiple PDFs
+for pdf in documents/*.pdf; do
+    python -m database.run_pipeline "$pdf" "output/$(basename "$pdf" .pdf).json" --vector-store chroma
+done
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- OpenAI for GPT-4 Vision API
+- Hugging Face for transformer models
+- Vector database communities (ChromaDB, Qdrant, Weaviate, Milvus, FAISS)
+- PDF parsing libraries (PyMuPDF, PDFPlumber, Docling, etc.)
 
